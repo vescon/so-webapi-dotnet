@@ -1,26 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Sample.Dtos;
 using Sample.Responses;
+using Sample.SampleInfos;
 
 namespace Sample
 {
     public static class Program
     {
-        private const string SymbolPath = "SO3/Master Data/Symbol Libraries/Symbols - Symbole/17 Robots - Roboter/ROB01";
+        private static readonly SampleInfo SampleInfo = new So3LocalWebApiSource();
 
         public static async Task Main()
         {
-            var url = "http://localhost:5000";
+            var url = SampleInfo.ApiUrl;
             var connection = new So3ApiConnector(url);
 
-            Console.WriteLine("Login ...");
-            await connection.Login("Username", "Password");
-            Console.WriteLine("Successfully Logged in");
+            await Login(connection, url, SampleInfo);
 
-            var path = "SO3/Projects/Sample/Sample/Sample/Sample Facility";
-            var name = "page01";
+            var layoutPage = await SetupLayoutPage(connection, SampleInfo);
+            var layoutPageGuid = layoutPage.LayoutGuid;
+
+            var placement1 = await CreateAnonymousPlacement(connection, layoutPageGuid, SampleInfo);
+            DumpPlacements(placement1);
+
+            var placement2 = await CreatePlacementWithIdentification(connection, layoutPageGuid, SampleInfo);
+            DumpPlacements(placement2);
+
+            var placement3 = await CreatePlacementWithAttributeUpdatesIdentifying(connection, layoutPageGuid, SampleInfo);
+            DumpPlacements(placement3);
+            
+            var placement4 = await CreatePlacementWithAttributeUpdatesDescriptiveMultilanguage(connection, layoutPageGuid, SampleInfo);
+            DumpPlacements(placement3);
+        }
+
+        private static async Task Login(So3ApiConnector connection, string url, SampleInfo sampleInfo)
+        {
+            Console.WriteLine($"Login into '{url}'");
+            await connection.Login(sampleInfo.Username, sampleInfo.Password);
+            Console.WriteLine("Successfully Logged in");
+        }
+
+        private static async Task<LayoutPageResponse> SetupLayoutPage(
+            So3ApiConnector connection,
+            SampleInfo sampleInfo)
+        {
+            var path = sampleInfo.LayoutFacilityPath;
+            var name = sampleInfo.LayoutPageName;
             var fullPath = $"{path}/{name}";
 
             // Setup layout page
@@ -35,50 +62,86 @@ namespace Sample
             else
                 Console.WriteLine($"Layout page {layoutPage.Name} exists with guid {layoutPage.LayoutGuid}");
 
-            // Create layout placements
+            return layoutPage;
+        }
+
+        private static async Task<PlacementsHeader> CreateAnonymousPlacement(
+            So3ApiConnector connection,
+            Guid layoutPageGuid,
+            SampleInfo sampleInfo)
+        {
             Console.WriteLine("Create anonymous placement:");
             var placements = await connection.CreatePlacement(
-                layoutPage.LayoutGuid,
-                SymbolPath,
+                layoutPageGuid,
+                sampleInfo.SymbolPath,
                 0,
                 0);
-            Console.WriteLine("Created placement:");
-            DumpPlacements(placements);
+            return placements.Single();
+        }
 
-            Console.WriteLine("Create placement via identification:");
-            placements = await connection.CreatePlacement(
-                layoutPage.LayoutGuid,
-                SymbolPath,
+        private static async Task<PlacementsHeader> CreatePlacementWithIdentification(
+            So3ApiConnector connection,
+            Guid layoutPageGuid,
+            SampleInfo sampleInfo)
+        {
+            Console.WriteLine("Create placement with identification:");
+            var placements = await connection.CreatePlacement(
+                layoutPageGuid,
+                sampleInfo.SymbolPath,
                 100,
                 100,
-                identification: "==123=ABC+456");
-            Console.WriteLine("Created placement:");
-            DumpPlacements(placements);
+                identification: sampleInfo.Identification);
+            return placements.Single();
+        }
 
-            Console.WriteLine("Create placement via attribute updates:");
+        private static async Task<PlacementsHeader> CreatePlacementWithAttributeUpdatesIdentifying(
+            So3ApiConnector connection,
+            Guid layoutPageGuid,
+            SampleInfo sampleInfo)
+        {
+            Console.WriteLine("Create placement with attribute updates (identifying):");
             var attributeUpdates = new List<AttributeUpdates>
             {
                 new AttributeUpdates(
                     new PlacementsSelector(true),
-                    new List<AttributeValuePart>
-                    {
-                        new AttributeValuePart("Plant", "XXX")
-                    })
+                    sampleInfo.AttributeValuePartsIdentifying)
             };
 
-            placements = await connection.CreatePlacement(
-                layoutPage.LayoutGuid,
-                SymbolPath,
+            var placements = await connection.CreatePlacement(
+                layoutPageGuid,
+                sampleInfo.SymbolPath,
                 200,
                 200,
                 attributeUpdates: attributeUpdates);
-            Console.WriteLine("Created placement:");
-            DumpPlacements(placements);
+            return placements.Single();
+        }
+        
+        private static async Task<PlacementsHeader> CreatePlacementWithAttributeUpdatesDescriptiveMultilanguage(
+            So3ApiConnector connection,
+            Guid layoutPageGuid,
+            SampleInfo sampleInfo)
+        {
+            Console.WriteLine("Create placement with attribute updates (descriptive multilanguage):");
+            var attributeUpdates = new List<AttributeUpdates>
+            {
+                new AttributeUpdates(
+                    new PlacementsSelector(true),
+                    sampleInfo.AttributeValuePartsDescriptiveMultilanguage)
+            };
+
+            var placements = await connection.CreatePlacement(
+                layoutPageGuid,
+                sampleInfo.SymbolPath,
+                200,
+                200,
+                attributeUpdates: attributeUpdates);
+            return placements.Single();
         }
 
-        private static void DumpPlacements(List<PlacementsHeader> placements)
+        private static void DumpPlacements(PlacementsHeader placement)
         {
-            placements?.ForEach(x => Console.WriteLine($"Guid: {x.Guid} Identification: {x.Identification}"));
+            Console.WriteLine("Created placement:");
+            Console.WriteLine($"Guid: {placement.Guid} Identification: {placement.Identification}");
         }
     }
 }

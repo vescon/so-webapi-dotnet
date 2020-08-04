@@ -20,7 +20,7 @@ namespace Sample
         {
             _client = new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(30),
+                Timeout = TimeSpan.FromMinutes(1),
                 BaseAddress = new Uri(baseUrl)
             };
         }

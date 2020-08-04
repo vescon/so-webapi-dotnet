@@ -2,20 +2,21 @@
 {
     public class AttributeValuePart
     {
-        public AttributeValuePart(string name, string value, bool isDescription = false)
+        public AttributeValuePart(string name, string value)
             : this(name)
         {
+            Value = value;
+        }
+
+        public AttributeValuePart(string name, string language, string value, bool isDescription = false)
+            : this(name)
+        {
+            Language = language;
+
             if (isDescription)
                 Description = value;
             else
                 Value = value;
-        }
-
-        public AttributeValuePart(string name, string language, string value)
-            : this(name)
-        {
-            Language = language;
-            Value = value;
         }
 
         public AttributeValuePart(string name, int index, string value)
