@@ -18,5 +18,6 @@ namespace Sample.SampleInfos
         public abstract string Identification { get; }
         public abstract List<AttributeValuePart> AttributeValuePartsIdentifying { get; }
         public virtual List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage => throw new NotSupportedException();
+        public virtual List<AttributeValuePart> AttributeValuePartsPropertyIndexed => throw new NotSupportedException();
     }
 }

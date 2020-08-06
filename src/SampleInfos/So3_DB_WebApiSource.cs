@@ -15,12 +15,20 @@ namespace Sample.SampleInfos
         public override List<AttributeValuePart> AttributeValuePartsIdentifying => new List<AttributeValuePart>
         {
             new AttributeValuePart("Plant", "XXX"),
-            new AttributeValuePart("Product", "PPP"),
+            new AttributeValuePart("Product", "PPP")
         };
 
-        public override List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage => new List<AttributeValuePart>
+        public override List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage =>
+            new List<AttributeValuePart>
+            {
+                new AttributeValuePart("Descriptive multilanguage", "en-US", "de value")
+            };
+
+        public override List<AttributeValuePart> AttributeValuePartsPropertyIndexed => new List<AttributeValuePart>
         {
-            new AttributeValuePart("Desc Multilingual", "de-DE", "de value")
+            new AttributeValuePart("Property Default", "value"),
+            new AttributeValuePart("Property Multilanguage", "en-US", "de value"),
+            new AttributeValuePart("Property Indexed", 42, "indexed value")
         };
     }
 }

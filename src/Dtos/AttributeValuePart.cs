@@ -25,15 +25,7 @@
             Index = index;
             Value = value;
         }
-
-        public AttributeValuePart(string name, int index, string language, string value)
-            : this(name)
-        {
-            Index = index;
-            Language = language;
-            Value = value;
-        }
-
+        
         private AttributeValuePart(string name)
         {
             Name = name;

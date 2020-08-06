@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sample.Responses
+namespace Sample.Dtos
 {
     public class PlacementsHeader
     {
