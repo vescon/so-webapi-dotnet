@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Sample.Dtos;
 
-namespace Sample.SampleInfos
+namespace Sample.EnvironmentInfos
 {
-    internal abstract class So3_DB_TestingExtern06 : SampleInfo
+    internal abstract class So3_DB_TestingExtern06 : EnvironmentInfoBase
     {
         public override string LayoutFacilityPath => "SO3/Projects/BMW/SL01/SL01/F95";
         public override string LayoutPageName => "Layout 01";

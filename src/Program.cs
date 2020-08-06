@@ -3,39 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sample.Dtos;
+using Sample.EnvironmentInfos;
 using Sample.Responses;
-using Sample.SampleInfos;
 
 namespace Sample
 {
     public static class Program
     {
-        private static readonly SampleInfo SampleInfo = new So3LocalWebApiSource();
+        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
 
         public static async Task Main()
         {
-            var url = SampleInfo.ApiUrl;
+            var url = EnvironmentInfo.ApiUrl;
             var connection = new So3ApiConnector(url);
 
-            await Login(connection, url, SampleInfo);
+            await Login(connection, url, EnvironmentInfo);
 
-            var layoutPage = await SetupLayoutPage(connection, SampleInfo);
+            var layoutPage = await SetupLayoutPage(connection, EnvironmentInfo);
             var layoutPageGuid = layoutPage.LayoutGuid;
 
             Console.WriteLine("Create anonymous placement:");
             var placement1 = await CreateAnonymousPlacement(
                 connection,
                 layoutPageGuid,
-                SampleInfo.SymbolPath,
+                EnvironmentInfo.SymbolPath,
                 0);
             DumpPlacements(placement1);
 
             Console.WriteLine("Create placement with identification:");
             var placement2 = await CreatePlacementWithIdentification(
                 connection, layoutPageGuid,
-                SampleInfo.SymbolPath,
+                EnvironmentInfo.SymbolPath,
                 100,
-                SampleInfo.Identification);
+                EnvironmentInfo.Identification);
             DumpPlacements(placement2);
 
             Console.WriteLine("Create placement with attribute updates (identifying):");
@@ -43,43 +43,43 @@ namespace Sample
                 await CreatePlacementWithAttributeUpdates(
                     connection,
                     layoutPageGuid,
-                    SampleInfo.SymbolPath,
+                    EnvironmentInfo.SymbolPath,
                     100,
-                    SampleInfo.AttributeValuePartsIdentifying);
+                    EnvironmentInfo.AttributeValuePartsIdentifying);
             DumpPlacements(placement3);
 
             Console.WriteLine("Create placement with attribute updates (descriptive multilanguage):");
             var placement4 = await CreatePlacementWithAttributeUpdates(
                 connection,
                 layoutPageGuid,
-                SampleInfo.SymbolPath,
+                EnvironmentInfo.SymbolPath,
                 200,
-                SampleInfo.AttributeValuePartsDescriptiveMultilanguage);
+                EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
             DumpPlacements(placement4);
 
             Console.WriteLine("Create placement with attribute updates (property indexed):");
             var placement5 = await CreatePlacementWithAttributeUpdates(
                 connection,
                 layoutPageGuid,
-                SampleInfo.SymbolPath,
+                EnvironmentInfo.SymbolPath,
                 300,
-                SampleInfo.AttributeValuePartsPropertyIndexed);
+                EnvironmentInfo.AttributeValuePartsPropertyIndexed);
             DumpPlacements(placement5);
         }
 
-        private static async Task Login(So3ApiConnector connection, string url, SampleInfo sampleInfo)
+        private static async Task Login(So3ApiConnector connection, string url, EnvironmentInfoBase environmentInfo)
         {
             Console.WriteLine($"Login into '{url}'");
-            await connection.Login(sampleInfo.Username, sampleInfo.Password);
+            await connection.Login(environmentInfo.Username, environmentInfo.Password);
             Console.WriteLine("Successfully Logged in");
         }
 
         private static async Task<LayoutPageResponse> SetupLayoutPage(
             So3ApiConnector connection,
-            SampleInfo sampleInfo)
+            EnvironmentInfoBase environmentInfo)
         {
-            var path = sampleInfo.LayoutFacilityPath;
-            var name = sampleInfo.LayoutPageName;
+            var path = environmentInfo.LayoutFacilityPath;
+            var name = environmentInfo.LayoutPageName;
             var fullPath = $"{path}/{name}";
 
             // Setup layout page

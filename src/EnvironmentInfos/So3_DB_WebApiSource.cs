@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Sample.Dtos;
 
-namespace Sample.SampleInfos
+namespace Sample.EnvironmentInfos
 {
-    internal abstract class So3_DB_WebApiSource : SampleInfo
+    internal abstract class So3_DB_WebApiSource : EnvironmentInfoBase
     {
         public override string LayoutFacilityPath => "SO3/Projects/Sample/Sample/Sample/Sample Facility";
 

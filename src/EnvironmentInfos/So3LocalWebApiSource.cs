@@ -1,6 +1,6 @@
-﻿namespace Sample.SampleInfos
+﻿namespace Sample.EnvironmentInfos
 {
-    internal class So3RemoteTestingExtern06HF : So3_DB_TestingExtern06
+    internal class So3LocalWebApiSource : So3_DB_WebApiSource
     {
         public override string ApiUrl => string.Empty;
         public override string Username => string.Empty;

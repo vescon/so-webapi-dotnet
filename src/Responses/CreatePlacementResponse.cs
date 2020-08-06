@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Sample.Dtos;
 
 namespace Sample.Responses
 {

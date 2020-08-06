@@ -1,4 +1,4 @@
-﻿namespace Sample.SampleInfos
+﻿namespace Sample.EnvironmentInfos
 {
     internal class So3_Empty : So3_DB_TestingExtern06
     {
