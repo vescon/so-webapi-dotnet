@@ -18,5 +18,16 @@ namespace Sample.EnvironmentInfos
             new AttributeValuePart("Werkekennung", "1234"),
             new AttributeValuePart("Einbauort (+)", "ABCD")
         };
+
+        public override List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage =>
+            new List<AttributeValuePart>
+            {
+                new AttributeValuePart("Beschreibung", "en-US", "en value")
+            };
+
+        public override List<AttributeValuePart> AttributeValuePartsPropertyIndexed => new List<AttributeValuePart>
+        {
+            new AttributeValuePart("ArtNr", 42, "123456")
+        };
     }
 }

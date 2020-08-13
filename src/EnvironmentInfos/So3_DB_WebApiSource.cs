@@ -21,7 +21,7 @@ namespace Sample.EnvironmentInfos
         public override List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage =>
             new List<AttributeValuePart>
             {
-                new AttributeValuePart("Descriptive multilanguage", "en-US", "de value")
+                new AttributeValuePart("Descriptive multilanguage", "en-US", "en value")
             };
 
         public override List<AttributeValuePart> AttributeValuePartsPropertyIndexed => new List<AttributeValuePart>

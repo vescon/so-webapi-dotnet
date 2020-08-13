@@ -44,7 +44,7 @@ namespace Sample
                     connection,
                     layoutPageGuid,
                     EnvironmentInfo.SymbolPath,
-                    100,
+                    200,
                     EnvironmentInfo.AttributeValuePartsIdentifying);
             DumpPlacements(placement3);
 
@@ -53,7 +53,7 @@ namespace Sample
                 connection,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
-                200,
+                300,
                 EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
             DumpPlacements(placement4);
 
@@ -62,7 +62,7 @@ namespace Sample
                 connection,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
-                300,
+                400,
                 EnvironmentInfo.AttributeValuePartsPropertyIndexed);
             DumpPlacements(placement5);
         }
