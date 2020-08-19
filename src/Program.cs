@@ -15,24 +15,25 @@ namespace Sample
         public static async Task Main()
         {
             var url = EnvironmentInfo.ApiUrl;
-            var connection = new So3ApiConnector(url);
+            var connector = new So3ApiConnector(url);
 
-            await Login(connection, url, EnvironmentInfo);
+            await Login(connector, url, EnvironmentInfo);
 
-            var layoutPage = await SetupLayoutPage(connection, EnvironmentInfo);
+            var layoutPage = await SetupLayoutPage(connector, EnvironmentInfo);
             var layoutPageGuid = layoutPage.LayoutGuid;
 
             Console.WriteLine("Create anonymous placement:");
             var placement1 = await CreateAnonymousPlacement(
-                connection,
+                connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
-                0);
+                0,
+                (float) Math.PI / 2);
             DumpPlacements(placement1);
 
             Console.WriteLine("Create placement with identification:");
             var placement2 = await CreatePlacementWithIdentification(
-                connection, layoutPageGuid,
+                connector, layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 100,
                 EnvironmentInfo.Identification);
@@ -41,7 +42,7 @@ namespace Sample
             Console.WriteLine("Create placement with attribute updates (identifying):");
             var placement3 =
                 await CreatePlacementWithAttributeUpdates(
-                    connection,
+                    connector,
                     layoutPageGuid,
                     EnvironmentInfo.SymbolPath,
                     200,
@@ -50,7 +51,7 @@ namespace Sample
 
             Console.WriteLine("Create placement with attribute updates (descriptive multilanguage):");
             var placement4 = await CreatePlacementWithAttributeUpdates(
-                connection,
+                connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 300,
@@ -59,7 +60,7 @@ namespace Sample
 
             Console.WriteLine("Create placement with attribute updates (property indexed):");
             var placement5 = await CreatePlacementWithAttributeUpdates(
-                connection,
+                connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 400,
@@ -67,15 +68,15 @@ namespace Sample
             DumpPlacements(placement5);
         }
 
-        private static async Task Login(So3ApiConnector connection, string url, EnvironmentInfoBase environmentInfo)
+        private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
         {
             Console.WriteLine($"Login into '{url}'");
-            await connection.Login(environmentInfo.Username, environmentInfo.Password);
+            await connector.Login(environmentInfo.Username, environmentInfo.Password);
             Console.WriteLine("Successfully Logged in");
         }
 
         private static async Task<LayoutPageResponse> SetupLayoutPage(
-            So3ApiConnector connection,
+            So3ApiConnector connector,
             EnvironmentInfoBase environmentInfo)
         {
             var path = environmentInfo.LayoutFacilityPath;
@@ -84,11 +85,11 @@ namespace Sample
 
             // Setup layout page
             Console.WriteLine($"Checking if Layout page with the path '<{fullPath}>' exists...");
-            var layoutPage = await connection.GetLayoutPage(fullPath);
+            var layoutPage = await connector.GetLayoutPage(fullPath);
             if (layoutPage == null)
             {
                 Console.WriteLine("Layout page doesn't exist. Creating ...");
-                layoutPage = await connection.CreateLayoutPage(path, name);
+                layoutPage = await connector.CreateLayoutPage(path, name);
                 Console.WriteLine($"Layout page {layoutPage.Name} created with guid {layoutPage.LayoutGuid}");
             }
             else
@@ -98,27 +99,29 @@ namespace Sample
         }
 
         private static async Task<PlacementsHeader> CreateAnonymousPlacement(
-            So3ApiConnector connection,
+            So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
-            int locationX)
+            int locationX,
+            float rotationZ)
         {
-            var placements = await connection.CreatePlacement(
+            var placements = await connector.CreatePlacement(
                 layoutPageGuid,
                 symbolPath,
                 locationX,
-                0);
+                0,
+                rotationZ);
             return placements.Single();
         }
 
         private static async Task<PlacementsHeader> CreatePlacementWithIdentification(
-            So3ApiConnector connection,
+            So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
             int locationX,
             string identification)
         {
-            var placements = await connection.CreatePlacement(
+            var placements = await connector.CreatePlacement(
                 layoutPageGuid,
                 symbolPath,
                 locationX,
@@ -128,7 +131,7 @@ namespace Sample
         }
 
         private static async Task<PlacementsHeader> CreatePlacementWithAttributeUpdates(
-            So3ApiConnector connection,
+            So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
             int locationX,
@@ -144,7 +147,7 @@ namespace Sample
 
             try
             {
-                var placements = await connection.CreatePlacement(
+                var placements = await connector.CreatePlacement(
                     layoutPageGuid,
                     symbolPath,
                     locationX,

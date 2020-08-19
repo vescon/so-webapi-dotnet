@@ -58,6 +58,7 @@ namespace Sample
             string placementTypePath,
             int x,
             int y,
+            float rotationZ = 0,
             string? identification = null,
             List<AttributeUpdates>? attributeUpdates = null)
         {
@@ -66,6 +67,7 @@ namespace Sample
             {
                 Type = new { Path = placementTypePath },
                 Location = new { X = x, Y = y },
+                RotationZ = rotationZ,
                 Identification = identification,
                 AttributeUpdates = attributeUpdates ?? new List<AttributeUpdates>()
             };
