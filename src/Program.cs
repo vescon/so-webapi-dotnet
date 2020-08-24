@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Sample.Dtos;
 using Sample.EnvironmentInfos;
 using Sample.Responses;
+using WebApi.Api.V1.Layouts;
 
 namespace Sample
 {
@@ -66,6 +67,41 @@ namespace Sample
                 400,
                 EnvironmentInfo.AttributeValuePartsPropertyIndexed);
             DumpPlacements(placement5);
+            
+            Console.WriteLine("Load placement 5 infos via placement guid");
+            var loadedPlacement5 = await connector.GetPlacements(
+                layoutPageGuid,
+                "en-US",
+                selector_placementGuid: placement5.Guid
+            );
+            loadedPlacement5.Placements.ForEach(DumpPlacements);
+
+            Console.WriteLine("Load placement 2 infos via identification");
+            var loadedPlacement2 = await connector.GetPlacements(
+                layoutPageGuid,
+                "en-US",
+                pageIndex: 0,
+                selector_identification: EnvironmentInfo.Identification
+            );
+            loadedPlacement2.Placements.ForEach(DumpPlacements);
+            
+            Console.WriteLine("Update Placement 2 attribute value parts");
+            await connector.UpdateAttributes(
+                layoutPageGuid,
+                new PlacementsSelector(EnvironmentInfo.Identification), 
+                "en-US",
+                valueParts: EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage
+            );
+            loadedPlacement2.Placements.ForEach(DumpPlacements);
+            
+            Console.WriteLine("Update Placement 2 attributes via identification");
+            await connector.UpdateAttributes(
+                layoutPageGuid,
+                new PlacementsSelector(EnvironmentInfo.Identification), 
+                "en-US",
+                identification: EnvironmentInfo.Identification
+            );
+            loadedPlacement2.Placements.ForEach(DumpPlacements);
         }
 
         private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
@@ -174,6 +210,25 @@ namespace Sample
                 return;
 
             Console.WriteLine($"Created: Guid: {placement.Guid} - Identification: {placement.Identification}");
+        }
+        
+        private static void DumpPlacements(Placement placement)
+        {
+            if (placement == null)
+                return;
+            
+            DumpPlacements(placement.Header);
+            Console.WriteLine($"Location: {placement.Location} - RotationZ: {placement.RotationZ}");
+            Dump(placement.AttributeValueParts);
+        }
+
+        private static void Dump(List<AttributeValuePart> attributeValueParts)
+        {
+            Console.WriteLine("Attribute value parts: ");
+            attributeValueParts
+                .ForEach(
+                    x =>
+                        Console.WriteLine($"Name: {x.Name} - {x.Value}- {x.Language}- {x.Index}- {x.Description}"));
         }
     }
 }

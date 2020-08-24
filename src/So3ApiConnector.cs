@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using Sample.Dtos;
 using Sample.Responses;
+using WebApi.Api.V1.Layouts;
 
 namespace Sample
 {
@@ -98,6 +99,55 @@ namespace Sample
             return await GetFromJsonContent<LayoutPageResponse>(response.Content);
         }
 
+        public async Task UpdateAttributes(
+            Guid layoutGuid,
+            PlacementsSelector selector,
+            string dataLanguage, 
+            string identification = null,
+            List<AttributeValuePart> valueParts = null)
+        {
+            var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements/Attributes";
+            var request = new 
+            {
+                Selector = selector,
+                DataLanguage = dataLanguage,
+                Identification = identification,
+                ValueParts = valueParts
+            };
+            var content = CreateJsonContent(request);
+            var response = await _client.PutAsync(url, content);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("updating attributes was not successful");
+        }
+        
+        public async Task<GetPlacementsResponse> GetPlacements(
+            Guid layoutGuid,
+            string dataLanguage, 
+            int? pageIndex = null,
+            Guid selector_placementGuid = default,
+            string selector_identification = null)
+        {
+            var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements";
+            
+            var parameters = new Dictionary<string, string>
+            {
+                { "DataLanguage", dataLanguage }
+            };
+            
+            if (pageIndex != null) parameters.Add("PageIndex", pageIndex.Value.ToString());
+            if (selector_placementGuid != Guid.Empty) parameters.Add("PlacementGuid", selector_placementGuid.ToString());
+            if (selector_identification != null) parameters.Add("IdentificationPrefix", selector_identification);
+
+            var urlWithParameters = QueryHelpers.AddQueryString(url, parameters);
+            var response = await _client.GetAsync(urlWithParameters);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("loading placements was not successful");
+            
+            return await GetFromJsonContent<GetPlacementsResponse>(response.Content);
+        }
+        
         private static StringContent CreateJsonContent(object request)
         {
             var json = JsonSerializer.Serialize(request);
