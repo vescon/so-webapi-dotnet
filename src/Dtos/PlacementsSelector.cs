@@ -1,4 +1,6 @@
-﻿namespace Sample.Dtos
+﻿using System;
+
+namespace Sample.Dtos
 {
     /// <summary>
     /// Only one of the options is set.
@@ -14,8 +16,15 @@
         {
             IdentificationPrefix = identificationPrefix;
         }
+        
+        public PlacementsSelector(Guid placementGuid)
+        {
+            PlacementGuid = placementGuid;
+        }
 
         public bool? All { get; }
         public string? IdentificationPrefix { get; }
+        
+        public Guid? PlacementGuid { get; set; }
     }
 }

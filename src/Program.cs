@@ -11,7 +11,7 @@ namespace Sample
 {
     public static class Program
     {
-        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
+        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalTestingExtern06();
 
         public static async Task Main()
         {
@@ -30,7 +30,7 @@ namespace Sample
                 EnvironmentInfo.SymbolPath,
                 0,
                 (float) Math.PI / 2);
-            DumpPlacements(placement1);
+            DumpPlacement(placement1);
 
             Console.WriteLine("Create placement with identification:");
             var placement2 = await CreatePlacementWithIdentification(
@@ -38,7 +38,7 @@ namespace Sample
                 EnvironmentInfo.SymbolPath,
                 100,
                 EnvironmentInfo.Identification);
-            DumpPlacements(placement2);
+            DumpPlacement(placement2);
 
             Console.WriteLine("Create placement with attribute updates (identifying):");
             var placement3 =
@@ -48,7 +48,7 @@ namespace Sample
                     EnvironmentInfo.SymbolPath,
                     200,
                     EnvironmentInfo.AttributeValuePartsIdentifying);
-            DumpPlacements(placement3);
+            DumpPlacement(placement3);
 
             Console.WriteLine("Create placement with attribute updates (descriptive multilanguage):");
             var placement4 = await CreatePlacementWithAttributeUpdates(
@@ -57,7 +57,7 @@ namespace Sample
                 EnvironmentInfo.SymbolPath,
                 300,
                 EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
-            DumpPlacements(placement4);
+            DumpPlacement(placement4);
 
             Console.WriteLine("Create placement with attribute updates (property indexed):");
             var placement5 = await CreatePlacementWithAttributeUpdates(
@@ -66,42 +66,41 @@ namespace Sample
                 EnvironmentInfo.SymbolPath,
                 400,
                 EnvironmentInfo.AttributeValuePartsPropertyIndexed);
-            DumpPlacements(placement5);
+            DumpPlacement(placement5);
             
             Console.WriteLine("Load placement 5 infos via placement guid");
-            var loadedPlacement5 = await connector.GetPlacements(
+            var loadedPlacement5 = connector.GetPlacementsAsync(
                 layoutPageGuid,
                 "en-US",
-                selector_placementGuid: placement5.Guid
+                selectorPlacementGuid: placement5.Guid
             );
-            loadedPlacement5.Placements.ForEach(DumpPlacements);
+            await foreach (var placement in loadedPlacement5)
+                DumpPlacement(placement);
 
             Console.WriteLine("Load placement 2 infos via identification");
-            var loadedPlacement2 = await connector.GetPlacements(
+            var loadedPlacement2 = connector.GetPlacementsAsync(
                 layoutPageGuid,
                 "en-US",
-                pageIndex: 0,
-                selector_identification: EnvironmentInfo.Identification
+                selectorIdentification: EnvironmentInfo.Identification
             );
-            loadedPlacement2.Placements.ForEach(DumpPlacements);
+            await foreach (var placement in loadedPlacement2)
+                DumpPlacement(placement);
             
             Console.WriteLine("Update Placement 2 attribute value parts");
             await connector.UpdateAttributes(
                 layoutPageGuid,
-                new PlacementsSelector(EnvironmentInfo.Identification), 
+                new PlacementsSelector(placement2.Guid),
                 "en-US",
                 valueParts: EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage
             );
-            loadedPlacement2.Placements.ForEach(DumpPlacements);
             
             Console.WriteLine("Update Placement 2 attributes via identification");
             await connector.UpdateAttributes(
                 layoutPageGuid,
-                new PlacementsSelector(EnvironmentInfo.Identification), 
+                new PlacementsSelector(EnvironmentInfo.Identification),
                 "en-US",
                 identification: EnvironmentInfo.Identification
             );
-            loadedPlacement2.Placements.ForEach(DumpPlacements);
         }
 
         private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
@@ -134,7 +133,7 @@ namespace Sample
             return layoutPage;
         }
 
-        private static async Task<PlacementsHeader> CreateAnonymousPlacement(
+        private static async Task<PlacementHeader> CreateAnonymousPlacement(
             So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
@@ -150,7 +149,7 @@ namespace Sample
             return placements.Single();
         }
 
-        private static async Task<PlacementsHeader> CreatePlacementWithIdentification(
+        private static async Task<PlacementHeader> CreatePlacementWithIdentification(
             So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
@@ -166,7 +165,7 @@ namespace Sample
             return placements.Single();
         }
 
-        private static async Task<PlacementsHeader> CreatePlacementWithAttributeUpdates(
+        private static async Task<PlacementHeader> CreatePlacementWithAttributeUpdates(
             So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
@@ -204,7 +203,7 @@ namespace Sample
             }
         }
 
-        private static void DumpPlacements(PlacementsHeader placement)
+        private static void DumpPlacement(PlacementHeader placement)
         {
             if (placement == null)
                 return;
@@ -212,13 +211,12 @@ namespace Sample
             Console.WriteLine($"Created: Guid: {placement.Guid} - Identification: {placement.Identification}");
         }
         
-        private static void DumpPlacements(Placement placement)
+        private static void DumpPlacement(Placement placement)
         {
             if (placement == null)
                 return;
             
-            DumpPlacements(placement.Header);
-            Console.WriteLine($"Location: {placement.Location} - RotationZ: {placement.RotationZ}");
+            Console.WriteLine($"Guid: {placement.Guid} Identification: {placement.Identification} Location: {placement.Location} - RotationZ: {placement.RotationZ}");
             Dump(placement.AttributeValueParts);
         }
 

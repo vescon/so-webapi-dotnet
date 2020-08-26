@@ -27,23 +27,28 @@
         }
         
         private AttributeValuePart(string name)
+        : this()
         {
             Name = name;
+        }
+
+        private AttributeValuePart()
+        {
         }
 
         /// <summary>
         /// Key part name.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public string? Language { get; }
-        public int? Index { get; }
+        public string? Language { get; set; }
+        public int? Index { get; set; }
 
-        public string? Value { get; }
+        public string? Value { get; set; }
 
         /// <summary>
         /// Optional and only for identifying values.
         /// </summary>
-        public string? Description { get; }
+        public string? Description { get; set; }
     }
 }
