@@ -38,6 +38,9 @@ namespace Sample
             var content = CreateJsonContent(request);
             var response = await _client.PostAsync(url, content);
 
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(await response.Content.ReadAsStringAsync());
+
             var responseData = await GetFromJsonContent<LoginUserResponse>(response.Content);
             _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {responseData.Token}");
         }
@@ -77,7 +80,7 @@ namespace Sample
             var response = await _client.PostAsync(url, content);
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception("creating placement was not successful");
+                throw new Exception(await response.Content.ReadAsStringAsync());
 
             var responseData = await GetFromJsonContent<CreatePlacementResponse>(response.Content);
             return responseData.Placements ?? new List<PlacementHeader>();
@@ -95,7 +98,7 @@ namespace Sample
             var response = await _client.PostAsync(url, content);
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception("creating layout page was not successful");
+                throw new Exception(await response.Content.ReadAsStringAsync());
 
             return await GetFromJsonContent<LayoutPageResponse>(response.Content);
         }
@@ -119,7 +122,7 @@ namespace Sample
             var response = await _client.PutAsync(url, content);
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception("updating attributes was not successful");
+                throw new Exception(await response.Content.ReadAsStringAsync());
         }
 
         public async IAsyncEnumerable<Placement> GetPlacementsAsync(
@@ -147,7 +150,7 @@ namespace Sample
                 var response = await _client.GetAsync(urlWithParameters);
 
                 if (!response.IsSuccessStatusCode)
-                    throw new Exception("loading placements was not successful");
+                    throw new Exception(await response.Content.ReadAsStringAsync());
 
                 var parsedResponse = await GetFromJsonContent<GetPlacementsResponse>(response.Content);                
                 foreach (var placement in parsedResponse.Placements)
