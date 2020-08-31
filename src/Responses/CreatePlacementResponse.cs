@@ -5,6 +5,6 @@ namespace Sample.Responses
 {
     public class CreatePlacementResponse
     {
-        public List<PlacementsHeader>? Placements { get; set; }
+        public List<PlacementHeader>? Placements { get; set; }
     }
 }

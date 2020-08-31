@@ -5,12 +5,18 @@ using System.Threading.Tasks;
 using Sample.Dtos;
 using Sample.EnvironmentInfos;
 using Sample.Responses;
+using WebApi.Api.V1.Layouts;
 
 namespace Sample
 {
     public static class Program
     {
         private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
+        private static PlacementHeader _placement1;
+        private static PlacementHeader _placement2;
+        private static PlacementHeader _placement3;
+        private static PlacementHeader _placement4;
+        private static PlacementHeader _placement5;
 
         public static async Task Main()
         {
@@ -22,55 +28,130 @@ namespace Sample
             var layoutPage = await SetupLayoutPage(connector, EnvironmentInfo);
             var layoutPageGuid = layoutPage.LayoutGuid;
 
-            Console.WriteLine("Create anonymous placement:");
-            var placement1 = await CreateAnonymousPlacement(
+            await CreatePlacements(connector, layoutPageGuid);
+            await LoadPlacements(connector, layoutPageGuid);
+            await UpdatePlacements(connector, layoutPageGuid);
+        }
+
+        private static async Task UpdatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Update Placement 2 attribute value parts");
+            await connector.UpdateAttributes(
+                layoutPageGuid,
+                new PlacementsSelector(_placement2.Guid),
+                "en-US",
+                valueParts: EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage
+            );
+
+            Console.WriteLine();
+            Console.WriteLine("Update Placement 2 attributes via identification");
+            await connector.UpdateAttributes(
+                layoutPageGuid,
+                new PlacementsSelector(EnvironmentInfo.Identification),
+                "en-US",
+                identification: "==123=XXX+457"
+            );
+        }
+
+        private static async Task LoadPlacements(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Load placement 4 infos via placement guid (en-US)");
+            var loadedPlacement4 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                selectorPlacementGuid: _placement4.Guid
+            );
+            await foreach (var placement in loadedPlacement4)
+                DumpPlacement(placement);
+
+            Console.WriteLine();
+            Console.WriteLine("Load placement 4 infos via placement guid (de-DE)");
+            loadedPlacement4 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "de-DE",
+                selectorPlacementGuid: _placement4.Guid
+            );
+            await foreach (var placement in loadedPlacement4)
+                DumpPlacement(placement);
+
+            Console.WriteLine();
+            Console.WriteLine("Load placement 5 infos via placement guid");
+            var loadedPlacement5 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                selectorPlacementGuid: _placement5.Guid
+            );
+            await foreach (var placement in loadedPlacement5)
+                DumpPlacement(placement);
+
+            Console.WriteLine();
+            Console.WriteLine("Load placement 2 infos via identification");
+            var loadedPlacement2 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                selectorIdentification: EnvironmentInfo.Identification
+            );
+            await foreach (var placement in loadedPlacement2)
+                DumpPlacement(placement);
+        }
+
+        private static async Task CreatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Create anonymous placement 1:");
+            _placement1 = await CreateAnonymousPlacement(
                 connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
-                0,
+                100,
                 (float) Math.PI / 2);
-            DumpPlacements(placement1);
+            DumpPlacement(_placement1);
 
-            Console.WriteLine("Create placement with identification:");
-            var placement2 = await CreatePlacementWithIdentification(
+            Console.WriteLine();
+            Console.WriteLine("Create placement 2 with identification:");
+            _placement2 = await CreatePlacementWithIdentification(
                 connector, layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
-                100,
+                200,
                 EnvironmentInfo.Identification);
-            DumpPlacements(placement2);
+            DumpPlacement(_placement2);
 
-            Console.WriteLine("Create placement with attribute updates (identifying):");
-            var placement3 =
-                await CreatePlacementWithAttributeUpdates(
-                    connector,
-                    layoutPageGuid,
-                    EnvironmentInfo.SymbolPath,
-                    200,
-                    EnvironmentInfo.AttributeValuePartsIdentifying);
-            DumpPlacements(placement3);
-
-            Console.WriteLine("Create placement with attribute updates (descriptive multilanguage):");
-            var placement4 = await CreatePlacementWithAttributeUpdates(
+            Console.WriteLine();
+            Console.WriteLine("Create placement 3 with attribute updates (identifying):");
+            _placement3 = await CreatePlacementWithAttributeUpdates(
                 connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 300,
-                EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
-            DumpPlacements(placement4);
+                EnvironmentInfo.AttributeValuePartsIdentifying);
+            DumpPlacement(_placement3);
 
-            Console.WriteLine("Create placement with attribute updates (property indexed):");
-            var placement5 = await CreatePlacementWithAttributeUpdates(
+            Console.WriteLine();
+            Console.WriteLine("Create placement 4 with attribute updates (descriptive multilanguage):");
+            _placement4 = await CreatePlacementWithAttributeUpdates(
                 connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 400,
+                EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
+            DumpPlacement(_placement4);
+
+            Console.WriteLine();
+            Console.WriteLine("Create placement 5 with attribute updates (property indexed):");
+            _placement5 = await CreatePlacementWithAttributeUpdates(
+                connector,
+                layoutPageGuid,
+                EnvironmentInfo.SymbolPath,
+                500,
                 EnvironmentInfo.AttributeValuePartsPropertyIndexed);
-            DumpPlacements(placement5);
+            DumpPlacement(_placement5);
         }
 
         private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
         {
-            Console.WriteLine($"Login into '{url}'");
+            Console.WriteLine($"Login into '{url}'...");
             await connector.Login(environmentInfo.Username, environmentInfo.Password);
             Console.WriteLine("Successfully Logged in");
         }
@@ -98,7 +179,7 @@ namespace Sample
             return layoutPage;
         }
 
-        private static async Task<PlacementsHeader> CreateAnonymousPlacement(
+        private static async Task<PlacementHeader> CreateAnonymousPlacement(
             So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
@@ -114,7 +195,7 @@ namespace Sample
             return placements.Single();
         }
 
-        private static async Task<PlacementsHeader> CreatePlacementWithIdentification(
+        private static async Task<PlacementHeader> CreatePlacementWithIdentification(
             So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
@@ -130,7 +211,7 @@ namespace Sample
             return placements.Single();
         }
 
-        private static async Task<PlacementsHeader> CreatePlacementWithAttributeUpdates(
+        private static async Task<PlacementHeader> CreatePlacementWithAttributeUpdates(
             So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
@@ -168,12 +249,46 @@ namespace Sample
             }
         }
 
-        private static void DumpPlacements(PlacementsHeader placement)
+        private static void DumpPlacement(PlacementHeader placement)
         {
             if (placement == null)
                 return;
 
             Console.WriteLine($"Created: Guid: {placement.Guid} - Identification: {placement.Identification}");
+        }
+
+        private static void DumpPlacement(Placement placement)
+        {
+            if (placement == null)
+                return;
+
+            Console.WriteLine("-----------------------------------");
+            Console.WriteLine(
+                $"Guid: {placement.Guid} Identification: {placement.Identification} Location: {placement.Location} - RotationZ: {placement.RotationZ}");
+            Dump(placement.AttributeValueParts);
+            Console.WriteLine("-----------------------------------");
+        }
+
+        private static void Dump(List<AttributeValuePart> attributeValueParts)
+        {
+            Console.WriteLine("Attribute value parts: ");
+
+            attributeValueParts
+                .ForEach(
+                    x =>
+                    {
+                        var valueString = new List<string>
+                            {
+                                x.Name,
+                                x.Index?.ToString(),
+                                x.Language,
+                                x.Value,
+                                x.Description
+                            }
+                            .Where(v => v != null)
+                            .Concatenate(" - ");
+                        Console.WriteLine($"Name: {valueString}");
+                    });
         }
     }
 }

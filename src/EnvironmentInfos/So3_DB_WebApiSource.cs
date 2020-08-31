@@ -21,13 +21,15 @@ namespace Sample.EnvironmentInfos
         public override List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage =>
             new List<AttributeValuePart>
             {
-                new AttributeValuePart("Descriptive multilanguage", "en-US", "en value")
+                new AttributeValuePart("Descriptive multilanguage", "en-US", "en value"),
+                new AttributeValuePart("Descriptive multilanguage", "de-DE", "de value")
             };
 
         public override List<AttributeValuePart> AttributeValuePartsPropertyIndexed => new List<AttributeValuePart>
         {
             new AttributeValuePart("Property Default", "value"),
-            new AttributeValuePart("Property Multilanguage", "en-US", "de value"),
+            new AttributeValuePart("Property Multilanguage", "de-DE", "de value"),
+            new AttributeValuePart("Property Multilanguage", "en-US", "en value"),
             new AttributeValuePart("Property Indexed", 42, "indexed value")
         };
     }

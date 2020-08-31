@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using Sample.Dtos;
 using Sample.Responses;
+using WebApi.Api.V1.Layouts;
 
 namespace Sample
 {
@@ -36,6 +38,9 @@ namespace Sample
             var content = CreateJsonContent(request);
             var response = await _client.PostAsync(url, content);
 
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(await response.Content.ReadAsStringAsync());
+
             var responseData = await GetFromJsonContent<LoginUserResponse>(response.Content);
             _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {responseData.Token}");
         }
@@ -53,16 +58,16 @@ namespace Sample
             return await GetFromJsonContent<LayoutPageResponse>(response.Content);
         }
         
-        public async Task<List<PlacementsHeader>> CreatePlacement(
+        public async Task<List<PlacementHeader>> CreatePlacement(
             Guid layoutGuid,
             string placementTypePath,
-            int x,
-            int y,
+            int x = 0,
+            int y = 0,
             float rotationZ = 0,
             string? identification = null,
             List<AttributeUpdates>? attributeUpdates = null)
         {
-            var url = $"{ApiPrefix}/layout/{layoutGuid}/Placements";
+            var url = $"{ApiPrefix}/layouts/{layoutGuid}/Placements";
             var request = new
             {
                 Type = new { Path = placementTypePath },
@@ -75,10 +80,10 @@ namespace Sample
             var response = await _client.PostAsync(url, content);
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception("creating placement was not successful");
+                throw new Exception(await response.Content.ReadAsStringAsync());
 
             var responseData = await GetFromJsonContent<CreatePlacementResponse>(response.Content);
-            return responseData.Placements ?? new List<PlacementsHeader>();
+            return responseData.Placements ?? new List<PlacementHeader>();
         }
 
         public async Task<LayoutPageResponse> CreateLayoutPage(string path, string name)
@@ -93,11 +98,69 @@ namespace Sample
             var response = await _client.PostAsync(url, content);
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception("creating layout page was not successful");
+                throw new Exception(await response.Content.ReadAsStringAsync());
 
             return await GetFromJsonContent<LayoutPageResponse>(response.Content);
         }
 
+        public async Task UpdateAttributes(
+            Guid layoutGuid,
+            PlacementsSelector selector,
+            string dataLanguage, 
+            string? identification = null,
+            List<AttributeValuePart>? valueParts = null)
+        {
+            var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements/Attributes";
+            var request = new 
+            {
+                Selector = selector,
+                DataLanguage = dataLanguage,
+                Identification = identification,
+                ValueParts = valueParts
+            };
+            var content = CreateJsonContent(request);
+            var response = await _client.PutAsync(url, content);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(await response.Content.ReadAsStringAsync());
+        }
+
+        public async IAsyncEnumerable<Placement> GetPlacementsAsync(
+            Guid layoutGuid,
+            string dataLanguage,
+            Guid? selectorPlacementGuid = null,
+            string? selectorIdentification = null)
+        {
+            var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements";
+            
+            var parameters = new Dictionary<string, string>
+            {
+                { "DataLanguage", dataLanguage }
+            };
+            
+            if (selectorPlacementGuid != null) parameters.Add("PlacementGuid", selectorPlacementGuid.Value.ToString());
+            if (selectorIdentification != null) parameters.Add("IdentificationPrefix", selectorIdentification);
+
+            var pageIndex = 0;
+            bool hasNext;
+            do
+            {
+                parameters["PageIndex"] = pageIndex.ToString();
+                var urlWithParameters = QueryHelpers.AddQueryString(url, parameters);
+                var response = await _client.GetAsync(urlWithParameters);
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception(await response.Content.ReadAsStringAsync());
+
+                var parsedResponse = await GetFromJsonContent<GetPlacementsResponse>(response.Content);                
+                foreach (var placement in parsedResponse.Placements)
+                    yield return placement;
+                    
+                pageIndex++;
+                hasNext = parsedResponse.HasNext;
+            } while (hasNext);
+        }
+        
         private static StringContent CreateJsonContent(object request)
         {
             var json = JsonSerializer.Serialize(request);
