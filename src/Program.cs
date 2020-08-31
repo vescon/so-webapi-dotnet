@@ -264,7 +264,7 @@ namespace Sample
 
             Console.WriteLine("-----------------------------------");
             Console.WriteLine(
-                $"Guid: {placement.Guid} Identification: {placement.Identification} Location: {placement.Location} - RotationZ: {placement.RotationZ}");
+                $"Guid: {placement.Guid} - Identification: {placement.Identification} - TypePath: '{placement.TypePath}' - Location: {placement.Location} - RotationZ: {placement.RotationZ}");
             Dump(placement.AttributeValueParts);
             Console.WriteLine("-----------------------------------");
         }
