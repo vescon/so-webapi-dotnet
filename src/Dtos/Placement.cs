@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using Sample.Dtos;
 
-namespace WebApi.Api.V1.Layouts
+namespace Sample.Dtos
 {
     public class Placement
     {

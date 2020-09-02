@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using Sample.Dtos;
 using Sample.Responses;
-using WebApi.Api.V1.Layouts;
 
 namespace Sample
 {

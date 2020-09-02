@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Sample.Dtos;
 using Sample.EnvironmentInfos;
 using Sample.Responses;
-using WebApi.Api.V1.Layouts;
 
 namespace Sample
 {

@@ -2,6 +2,13 @@
 {
     public class AttributeValuePart
     {
+        /// <summary>
+        /// required for JSON deserialization from .NET 4.7.2
+        /// </summary>
+        public AttributeValuePart()
+        {
+        }
+
         public AttributeValuePart(string name, string value)
             : this(name)
         {
@@ -30,10 +37,6 @@
         : this()
         {
             Name = name;
-        }
-
-        private AttributeValuePart()
-        {
         }
 
         /// <summary>

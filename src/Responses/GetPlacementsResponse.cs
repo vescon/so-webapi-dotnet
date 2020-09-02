@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Sample.Dtos;
 
-namespace WebApi.Api.V1.Layouts
+namespace Sample.Responses
 {
     public class GetPlacementsResponse
     {
