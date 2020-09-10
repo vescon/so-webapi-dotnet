@@ -11,6 +11,7 @@ namespace Sample
     public static class Program
     {
         private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
+
         private static PlacementHeader _placement1;
         private static PlacementHeader _placement2;
         private static PlacementHeader _placement3;
@@ -30,70 +31,14 @@ namespace Sample
             await CreatePlacements(connector, layoutPageGuid);
             await LoadPlacements(connector, layoutPageGuid);
             await UpdatePlacements(connector, layoutPageGuid);
+            await UpdateMarkedForDeletion(connector, layoutPageGuid);
         }
 
-        private static async Task UpdatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
+        private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
         {
-            Console.WriteLine();
-            Console.WriteLine("Update Placement 2 attribute value parts");
-            await connector.UpdateAttributes(
-                layoutPageGuid,
-                new PlacementsSelector(_placement2.Guid),
-                "en-US",
-                valueParts: EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage
-            );
-
-            Console.WriteLine();
-            Console.WriteLine("Update Placement 2 attributes via identification");
-            await connector.UpdateAttributes(
-                layoutPageGuid,
-                new PlacementsSelector(EnvironmentInfo.Identification),
-                "en-US",
-                identification: "==123=XXX+457"
-            );
-        }
-
-        private static async Task LoadPlacements(So3ApiConnector connector, Guid layoutPageGuid)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Load placement 4 infos via placement guid (en-US)");
-            var loadedPlacement4 = connector.GetPlacementsAsync(
-                layoutPageGuid,
-                "en-US",
-                selectorPlacementGuid: _placement4.Guid
-            );
-            await foreach (var placement in loadedPlacement4)
-                DumpPlacement(placement);
-
-            Console.WriteLine();
-            Console.WriteLine("Load placement 4 infos via placement guid (de-DE)");
-            loadedPlacement4 = connector.GetPlacementsAsync(
-                layoutPageGuid,
-                "de-DE",
-                selectorPlacementGuid: _placement4.Guid
-            );
-            await foreach (var placement in loadedPlacement4)
-                DumpPlacement(placement);
-
-            Console.WriteLine();
-            Console.WriteLine("Load placement 5 infos via placement guid");
-            var loadedPlacement5 = connector.GetPlacementsAsync(
-                layoutPageGuid,
-                "en-US",
-                selectorPlacementGuid: _placement5.Guid
-            );
-            await foreach (var placement in loadedPlacement5)
-                DumpPlacement(placement);
-
-            Console.WriteLine();
-            Console.WriteLine("Load placement 2 infos via identification");
-            var loadedPlacement2 = connector.GetPlacementsAsync(
-                layoutPageGuid,
-                "en-US",
-                selectorIdentification: EnvironmentInfo.Identification
-            );
-            await foreach (var placement in loadedPlacement2)
-                DumpPlacement(placement);
+            Console.WriteLine($"Login into '{url}'...");
+            await connector.Login(environmentInfo.Username, environmentInfo.Password);
+            Console.WriteLine("Successfully Logged in");
         }
 
         private static async Task CreatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
@@ -148,11 +93,89 @@ namespace Sample
             DumpPlacement(_placement5);
         }
 
-        private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
+        private static async Task LoadPlacements(So3ApiConnector connector, Guid layoutPageGuid)
         {
-            Console.WriteLine($"Login into '{url}'...");
-            await connector.Login(environmentInfo.Username, environmentInfo.Password);
-            Console.WriteLine("Successfully Logged in");
+            Console.WriteLine();
+            Console.WriteLine("Load placement 4 infos via placement guid (en-US)");
+            var loadedPlacement4 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                selectorPlacementGuid: _placement4.Guid
+            );
+            await foreach (var placement in loadedPlacement4)
+                DumpPlacement(placement);
+
+            Console.WriteLine();
+            Console.WriteLine("Load placement 4 infos via placement guid (de-DE)");
+            loadedPlacement4 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "de-DE",
+                selectorPlacementGuid: _placement4.Guid
+            );
+            await foreach (var placement in loadedPlacement4)
+                DumpPlacement(placement);
+
+            Console.WriteLine();
+            Console.WriteLine("Load placement 5 infos via placement guid");
+            var loadedPlacement5 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                selectorPlacementGuid: _placement5.Guid
+            );
+            await foreach (var placement in loadedPlacement5)
+                DumpPlacement(placement);
+
+            Console.WriteLine();
+            Console.WriteLine("Load placement 2 infos via identification");
+            var loadedPlacement2 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                selectorIdentification: EnvironmentInfo.Identification
+            );
+            await foreach (var placement in loadedPlacement2)
+                DumpPlacement(placement);
+        }
+
+        private static async Task UpdatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Update Placement 2 attribute value parts");
+            await connector.UpdateAttributes(
+                layoutPageGuid,
+                new PlacementsSelector(_placement2.Guid),
+                "en-US",
+                valueParts: EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage
+            );
+
+            Console.WriteLine();
+            Console.WriteLine("Update Placement 2 attributes via identification");
+            await connector.UpdateAttributes(
+                layoutPageGuid,
+                new PlacementsSelector(EnvironmentInfo.Identification),
+                "en-US",
+                identification: "==123=XXX+457"
+            );
+        }
+
+        private static async Task UpdateMarkedForDeletion(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Update Placement 2 MarkedForDeletion to true");
+            await connector.UpdateMarkedForDeletion(
+                layoutPageGuid,
+                new PlacementsSelector(_placement2.Guid),
+                true
+            );
+
+            Console.WriteLine();
+            Console.WriteLine("Load placement 2 infos via identification");
+            var loadedPlacement2 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                _placement2.Guid
+            );
+            await foreach (var placement in loadedPlacement2)
+                DumpPlacement(placement);
         }
 
         private static async Task<LayoutPageResponse> SetupLayoutPage(

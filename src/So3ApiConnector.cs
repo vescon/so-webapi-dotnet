@@ -124,6 +124,29 @@ namespace Sample
                 throw new Exception(await response.Content.ReadAsStringAsync());
         }
 
+        public async Task UpdateMarkedForDeletion(
+            Guid layoutGuid,
+            PlacementsSelector selector,
+            bool markedForDeletion)
+        {
+            var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements/Attributes";
+            var deletionValue = markedForDeletion ? "X" : string.Empty;
+            var request = new
+            {
+                Selector = selector,
+                DataLanguage = "en-US",
+                ValueParts = new[]
+                {
+                    new { Name = "MarkedForDeletion", Language = default(string), Value = deletionValue, Index = default(int), Description = default(string) }
+                }
+            };
+            var content = CreateJsonContent(request);
+            var response = await _client.PutAsync(url, content);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(await response.Content.ReadAsStringAsync());
+        }
+
         public async IAsyncEnumerable<Placement> GetPlacementsAsync(
             Guid layoutGuid,
             string dataLanguage,
