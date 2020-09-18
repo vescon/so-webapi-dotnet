@@ -14,6 +14,7 @@ namespace Sample.EnvironmentInfos
         public virtual string LayoutPageName => "page01";
 
         public abstract string SymbolPath { get; }
+        public abstract string MacroPath { get; }
 
         public abstract string Identification { get; }
         public virtual List<AttributeValuePart> AttributeValuePartsIdentifying => throw new NotSupportedException();

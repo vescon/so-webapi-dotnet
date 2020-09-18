@@ -10,6 +10,9 @@ namespace Sample.EnvironmentInfos
         public override string SymbolPath =>
             "SO3/Master Data/Symbol Libraries/Symbols - Symbole/17 Robots - Roboter/ROB01";
 
+        public override string MacroPath =>
+            "SO3/Master Data/Macros/1Robot_1SymbolWith4Connectors_3Regions";
+
         public override string Identification => "==123=ABC+456";
 
         public override List<AttributeValuePart> AttributeValuePartsIdentifying => new List<AttributeValuePart>

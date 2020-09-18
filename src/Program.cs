@@ -28,10 +28,12 @@ namespace Sample
             var layoutPage = await SetupLayoutPage(connector, EnvironmentInfo);
             var layoutPageGuid = layoutPage.LayoutGuid;
 
-            await CreatePlacements(connector, layoutPageGuid);
+            await CreateSymbolReferences(connector, layoutPageGuid);
             await LoadPlacements(connector, layoutPageGuid);
             await UpdatePlacements(connector, layoutPageGuid);
             await UpdateMarkedForDeletion(connector, layoutPageGuid);
+
+            await CreateMacroReference(connector, layoutPageGuid);
         }
 
         private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
@@ -41,7 +43,7 @@ namespace Sample
             Console.WriteLine("Successfully Logged in");
         }
 
-        private static async Task CreatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
+        private static async Task CreateSymbolReferences(So3ApiConnector connector, Guid layoutPageGuid)
         {
             Console.WriteLine();
             Console.WriteLine("Create anonymous placement 1:");
@@ -130,7 +132,7 @@ namespace Sample
             var loadedPlacement2 = connector.GetPlacementsAsync(
                 layoutPageGuid,
                 "en-US",
-                selectorIdentification: EnvironmentInfo.Identification
+                selectorIdentificationPrefix: EnvironmentInfo.Identification
             );
             await foreach (var placement in loadedPlacement2)
                 DumpPlacement(placement);
@@ -175,6 +177,30 @@ namespace Sample
                 _placement2.Guid
             );
             await foreach (var placement in loadedPlacement2)
+                DumpPlacement(placement);
+        }
+
+        private static async Task CreateMacroReference(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Create macro reference:");
+            var placements = await connector.CreatePlacement(
+                layoutPageGuid,
+                EnvironmentInfo.MacroPath,
+                100,
+                300,
+                (float) Math.PI / 2,
+                "==XXX");
+            placements.ForEach(DumpPlacement);
+
+            Console.WriteLine();
+            Console.WriteLine("Load macro placements via identification:");
+            var loadedPlacement4 = connector.GetPlacementsAsync(
+                layoutPageGuid,
+                "en-US",
+                selectorIdentificationPrefix: "==XXX"
+            );
+            await foreach (var placement in loadedPlacement4)
                 DumpPlacement(placement);
         }
 
@@ -286,7 +312,7 @@ namespace Sample
 
             Console.WriteLine("-----------------------------------");
             Console.WriteLine(
-                $"Guid: {placement.Guid} - Identification: {placement.Identification} - TypePath: '{placement.TypePath}' - Location: {placement.Location} - RotationZ: {placement.RotationZ}");
+                $"Guid: {placement.Guid} - Identification: {placement.Identification} - Type: {placement.Type} - TypePath: '{placement.TypePath}' - Location: ({placement.Location.X}/{placement.Location.Y}) - RotationZ: {placement.RotationZ}");
             Dump(placement.AttributeValueParts);
             Console.WriteLine("-----------------------------------");
         }

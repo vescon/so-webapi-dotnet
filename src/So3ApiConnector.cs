@@ -151,7 +151,7 @@ namespace Sample
             Guid layoutGuid,
             string dataLanguage,
             Guid? selectorPlacementGuid = null,
-            string? selectorIdentification = null)
+            string? selectorIdentificationPrefix = null)
         {
             var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements";
             
@@ -161,7 +161,7 @@ namespace Sample
             };
             
             if (selectorPlacementGuid != null) parameters.Add("PlacementGuid", selectorPlacementGuid.Value.ToString());
-            if (selectorIdentification != null) parameters.Add("IdentificationPrefix", selectorIdentification);
+            if (selectorIdentificationPrefix != null) parameters.Add("IdentificationPrefix", selectorIdentificationPrefix);
 
             var pageIndex = 0;
             bool hasNext;
