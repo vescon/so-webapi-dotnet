@@ -13,7 +13,7 @@ jobs:
         source-url: https://nuget.pkg.github.com/vescon/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - run: dotnet build Vescon.So.WebApi.sln
+    - run: dotnet build --configuration Release Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --configuration Release --no-build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj 
     - name: set api key
