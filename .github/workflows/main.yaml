@@ -1,0 +1,20 @@
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    # Authenticates packages to push to GPR
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x' # SDK Version to use.
+        source-url: https://nuget.pkg.github.com/vescon/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    - run: dotnet build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client/bin/Release/*.nupkg
