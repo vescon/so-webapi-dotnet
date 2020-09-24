@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: dotnet build --configuration Release Vescon.So.WebApi.sln -o Artifacts/Binaries
+    - run: dotnet build --configuration Release Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --include-source --configuration Release --no-build Vescon.So.WebApi.sln  -o Artifacts/Packages
     # - name: Upload Artifact
