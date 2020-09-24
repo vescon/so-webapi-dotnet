@@ -22,7 +22,6 @@ jobs:
     - name: Publish backend nuget
       run: curl -vX PUT -u "user:${{ secrets.GITHUB_TOKEN }}" -F package=@Artifacts/Packages/backend.Vescon.So.WebApi.Client.0.0.2.symbols.nupkg https://nuget.pkg.github.com/vescon/
       shell: bash
-      working-directory: ${{env.backend-directory}}
     # - name: Publish the package to Github package repository
     #   run: |
     #     dotnet nuget add source https://nuget.pkg.github.com/vescon/index.json -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
