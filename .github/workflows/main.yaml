@@ -27,4 +27,4 @@ jobs:
     - name: Publish the package to Github package repository
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/vescon -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
-        dotnet nuget push **/*.nupkg -s https://nuget.pkg.github.com/vescon --skip-duplicate --no-service-endpoint
+        dotnet nuget push **/*.nupkg -s https://nuget.pkg.github.com/vescon --skip-duplicate
