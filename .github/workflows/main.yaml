@@ -8,25 +8,11 @@ jobs:
     - run: dotnet build --configuration Release Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --configuration Release --no-build Vescon.So.WebApi.sln  -o Artifacts/Packages
-    # - name: Upload Artifact
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: nupkg
-    #     path: '**/*.nupkg'
-    # - uses: nuget/setup-nuget@v1
-    #   with:
-    #     nuget-version: '5.x'
-    # - name: Publish the package to GPR
-    #   run: |
-    #     nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon -NonInteractive -SkipDuplicate -ApiKey ${{ secrets.GITHUB_TOKEN }}
-    # - name: Setup nuget config
-    #   run: sed 's/GITHUB_TOKEN/${{ secrets.GITHUB_TOKEN }}/g' .nuget.config > nuget.config
-    # - name: Publish nuget
-    #   run: dotnet nuget push Artifacts/Packages/**/*.nupkg -s "github"
-    # - name: Publish frontend nuget
-    #   run: curl -vX PUT -u "user:${{secrets.GITHUB_TOKEN}}" -F package=@Artifacts/Packages/Vescon.So.WebApi.Client.0.0.2.nupkg https://nuget.pkg.github.com/vescon/
-    #   shell: bash
-    - name: Publish the package to Github package repository
-      run: |
-        dotnet nuget add source https://nuget.pkg.github.com/vescon/index.json -n gpr -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
-        dotnet nuget push Artifacts/Packages/**/*.nupkg -s "gpr" --skip-duplicate
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nupkg
+        path: 'Artifacts/Packages/++/*.nupkg'
+    - name: Publish frontend nuget
+      run: curl -vX PUT -u "user:${{secrets.GITHUB_TOKEN}}" -F package=@Artifacts/Packages/Vescon.So.WebApi.Client.0.0.2.nupkg https://nuget.pkg.github.com/vescon/
+      shell: bash
