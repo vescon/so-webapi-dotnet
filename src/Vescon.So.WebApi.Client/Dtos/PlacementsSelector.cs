@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sample.Dtos
+namespace Vescon.So.WebApi.Client.Dtos
 {
     /// <summary>
     /// Only one of the options is set.

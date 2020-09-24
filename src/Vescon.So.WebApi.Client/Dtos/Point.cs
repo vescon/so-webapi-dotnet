@@ -1,4 +1,4 @@
-namespace Sample.Dtos
+namespace Vescon.So.WebApi.Client.Dtos
 {
     public class Point
     {

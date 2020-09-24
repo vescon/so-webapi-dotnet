@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sample.Dtos
+namespace Vescon.So.WebApi.Client.Dtos
 {
     public class AttributeUpdates
     {

@@ -1,4 +1,4 @@
-﻿namespace Sample.Responses
+﻿namespace Vescon.So.WebApi.Client.Responses
 {
     public class LoginUserResponse
     {
