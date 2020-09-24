@@ -13,11 +13,13 @@ jobs:
         source-url: https://nuget.pkg.github.com/vescon/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - run: dotnet build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
+    - run: dotnet build Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --configuration Release src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
     - name: Publish the package to GPR
       run: dotnet nuget push **/*.nupkg
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:

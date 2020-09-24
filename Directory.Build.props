@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageId>Vescon.So.WebApi.Client</PackageId>
+        <PackageId>$(ProjectName)</PackageId>
         <Version>0.0.1</Version>
         <Authors>vescon</Authors>
         <Company>Vescon GmbH</Company>
