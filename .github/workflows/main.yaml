@@ -13,7 +13,7 @@ jobs:
     - name: Create the package
       run: dotnet pack --include-source --configuration Release --no-build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj 
     - name: set api key
-      run: dotnet nuget add source https://nuget.pkg.github.com/martinay/index.json -p ${{secrets.GITHUB_TOKEN}} -u vescon
+      run: dotnet nuget add source https://nuget.pkg.github.com/martinay/index.json -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
