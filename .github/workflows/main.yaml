@@ -19,8 +19,7 @@ jobs:
     #     path: '**/*.nupkg'
     - uses: nuget/setup-nuget@v1
       with:
-        nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
         nuget-version: '5.x'
     - name: Publish the package to GPR
       run: |
-        nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon -SkipDuplicate
+        nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon -SkipDuplicate -ApiKey ${{ secrets.GITHUB_TOKEN }}
