@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <PackageId>$(ProjectName)</PackageId>
-        <Version>0.0.1</Version>
+        <Version>0.0.2</Version>
         <Authors>vescon</Authors>
         <Company>Vescon GmbH</Company>
         <PackageDescription>Package to consume to SO WebAPI.</PackageDescription>
