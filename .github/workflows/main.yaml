@@ -2,7 +2,7 @@ on: [push]
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     # Authenticates packages to push to GPR
@@ -12,7 +12,7 @@ jobs:
         dotnet-version: '3.1.x' # SDK Version to use.
     - run: dotnet build --configuration Release Vescon.So.WebApi.sln
     - name: Create the package
-      run: dotnet pack --configuration Release --no-build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj 
+      run: dotnet pack --include-source --configuration Release --no-build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj 
     - name: set api key
       run: dotnet nuget list source
     - name: Upload Artifact
