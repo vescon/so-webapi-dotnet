@@ -28,5 +28,5 @@ jobs:
     #   shell: bash
     - name: Publish the package to Github package repository
       run: |
-        dotnet nuget add source https://nuget.pkg.github.com/vescon/index.json -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
-        dotnet nuget push Artifacts/Packages/**/*.nupkg -s https://nuget.pkg.github.com/vescon/index.json --skip-duplicate
+        dotnet nuget add source https://nuget.pkg.github.com/vescon/index.json -n gpr -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
+        dotnet nuget push Artifacts/Packages/**/*.nupkg -s "gpr" --skip-duplicate
