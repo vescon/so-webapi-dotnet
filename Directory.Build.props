@@ -1,8 +1,18 @@
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0"
+    xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <LangVersion>8</LangVersion>
-        
-<!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+
+        <!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Vescon.So.WebApi.Client</PackageId>
+        <Version>0.0.1</Version>
+        <Authors>vescon</Authors>
+        <Company>Vescon GmbH</Company>
+        <PackageDescription>Package to consume to SO WebAPI.</PackageDescription>
+        <RepositoryUrl>https://github.com/vescon/so-webapi-sample</RepositoryUrl>
     </PropertyGroup>
 </Project>
