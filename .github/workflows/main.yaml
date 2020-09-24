@@ -17,9 +17,9 @@ jobs:
     - name: Create the package
       run: dotnet pack --configuration Release src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
     - name: Publish the package to GPR
-      run: dotnet nuget push ./src/Vescon.So.WebApi.Client/bin/Release/*.nupkg
+      run: dotnet nuget push **/*.nupkg
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: nupkg
-        path: ./src/Vescon.So.WebApi.Client/bin/Release/*.nupkg
+        path: '**/*.nupkg'
