@@ -13,11 +13,11 @@ jobs:
         source-url: https://nuget.pkg.github.com/vescon/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - run: dotnet build Vescon.So.WebApi.sln
-    - name: Create the package
-      run: dotnet pack --configuration Release src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
+    # - run: dotnet build Vescon.So.WebApi.sln
+    # - name: Create the package
+    #   run: dotnet pack --configuration Release src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
     - name: set api key
-      run: dotnet nuget setapikey ${{secrets.GITHUB_TOKEN}} -Source https://nuget.pkg.github.com/vescon/index.json
+      run: dotnet nuget list
     - name: Publish the package to GPR
       run: dotnet nuget push **/*.nupkg
       env:
