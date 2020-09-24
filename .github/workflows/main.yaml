@@ -16,6 +16,8 @@ jobs:
     - run: dotnet build Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --configuration Release src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj
+    - name: set api key
+      run: dotnet nuget setapikey ${{secrets.GITHUB_TOKEN}} -Source https://nuget.pkg.github.com/vescon/index.json
     - name: Publish the package to GPR
       run: dotnet nuget push **/*.nupkg
       env:
