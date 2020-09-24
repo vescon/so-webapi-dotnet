@@ -12,7 +12,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: nupkg
-        path: 'Artifacts/Packages/++/*.nupkg'
+        path: 'Artifacts/Packages/**/*.nupkg'
     - name: Publish frontend nuget
       run: curl -vX PUT -u "user:${{secrets.GITHUB_TOKEN}}" -F package=@Artifacts/Packages/Vescon.So.WebApi.Client.0.0.2.nupkg https://nuget.pkg.github.com/vescon/
       shell: bash
