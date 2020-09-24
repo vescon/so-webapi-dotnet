@@ -10,18 +10,15 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '3.1.x' # SDK Version to use.
-        source-url: https://nuget.pkg.github.com/vescon/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - run: dotnet build --configuration Release Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --configuration Release --no-build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj 
     - name: set api key
       run: dotnet nuget list source
-    - name: Publish the package to GPR
-      run: dotnet nuget push **/*.nupkg --api-key ${{secrets.GITHUB_TOKEN}}
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: nupkg
         path: '**/*.nupkg'
+    - name: Publish the package to GPR
+      run: dotnet nuget push **/*.nupkg --api-key ${{secrets.GITHUB_TOKEN}} -s https://nuget.pkg.github.com/vescon/index.json
