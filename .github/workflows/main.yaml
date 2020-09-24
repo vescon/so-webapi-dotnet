@@ -12,12 +12,15 @@ jobs:
     - run: dotnet build --configuration Release Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --include-source --configuration Release --no-build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+    # - name: Upload Artifact
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: nupkg
+    #     path: '**/*.nupkg'
+    - uses: nuget/setup-nuget@v1
       with:
-        name: nupkg
-        path: '**/*.nupkg'
+        nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
+        nuget-version: '5.x'
     - name: Publish the package to GPR
       run: |
-        dotnet nuget add source https://nuget.pkg.github.com/vescon/index.json -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
-        dotnet nuget push **/*.nupkg -s https://nuget.pkg.github.com/vescon/index.json --skip-duplicate --no-service-endpoint --api-key ${{secrets.GITHUB_TOKEN}}
+        nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon/index.json -SkipDuplicate -ApiKey ${{secrets.GITHUB_TOKEN}}
