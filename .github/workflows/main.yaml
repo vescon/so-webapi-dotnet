@@ -17,10 +17,11 @@ jobs:
     #   with:
     #     name: nupkg
     #     path: '**/*.nupkg'
-    - uses: nuget/setup-nuget@v1
-      with:
-        nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
-        nuget-version: '5.x'
+    # - uses: nuget/setup-nuget@v1
+    #   with:
+    #     nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
+    #     nuget-version: '5.x'
     - name: Publish the package to GPR
       run: |
-        nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon/ -SkipDuplicate -ApiKey ${{secrets.GITHUB_TOKEN}}
+        dotnet tool install -g gpr --no-cache -v q
+        gpr push --api-key ${{ secrets.GITHUB_TOKEN }} '**/*.nupkg'
