@@ -19,9 +19,10 @@ jobs:
     # - name: Publish the package to GPR
     #   run: |
     #     nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon -NonInteractive -SkipDuplicate -ApiKey ${{ secrets.GITHUB_TOKEN }}
-    - name: Publish backend nuget
-      run: curl -vX PUT -u "user:${{ secrets.GITHUB_TOKEN }}" -F package=@Artifacts/Packages/backend.Vescon.So.WebApi.Client.0.0.2.symbols.nupkg https://nuget.pkg.github.com/vescon/
-      shell: bash
+    - name: Setup nuget config
+      run: sed 's/GITHUB_TOKEN/${{ secrets.GITHUB_TOKEN }}/g' .nuget.config > nuget.config
+    - name: Publish nuget
+      run: dotnet nuget push src/bin/Release/*.nupkg -s "github"
     # - name: Publish the package to Github package repository
     #   run: |
     #     dotnet nuget add source https://nuget.pkg.github.com/vescon/index.json -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
