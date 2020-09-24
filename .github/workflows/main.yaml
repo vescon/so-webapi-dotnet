@@ -23,4 +23,4 @@ jobs:
         nuget-version: '5.x'
     - name: Publish the package to GPR
       run: |
-        nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon/index.json -SkipDuplicate -ApiKey ${{secrets.GITHUB_TOKEN}}
+        nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon/ -SkipDuplicate -ApiKey ${{secrets.GITHUB_TOKEN}}
