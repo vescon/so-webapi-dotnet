@@ -5,13 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.x' # SDK Version to use.
-    - run: dotnet build --configuration Release Vescon.So.WebApi.sln
+    - run: dotnet build --configuration Release Vescon.So.WebApi.sln -o Artifacts/Binaries
     - name: Create the package
-      run: dotnet pack --include-source --configuration Release --no-build src/Vescon.So.WebApi.Client/Vescon.So.WebApi.Client.csproj 
+      run: dotnet pack --include-source --configuration Release --no-build Vescon.So.WebApi.sln  -o Artifacts/Packages
     # - name: Upload Artifact
     #   uses: actions/upload-artifact@v2
     #   with:
@@ -27,4 +23,4 @@ jobs:
     - name: Publish the package to Github package repository
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/vescon/index.json -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
-        dotnet nuget push **/*.nupkg -s https://nuget.pkg.github.com/vescon/index.json --skip-duplicate
+        dotnet nuget push Artifacts/Packages/**/*.nupkg -s https://nuget.pkg.github.com/vescon/index.json --skip-duplicate

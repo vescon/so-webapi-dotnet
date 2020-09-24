@@ -3,6 +3,7 @@
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <LangVersion>8</LangVersion>
+        <IsPackable>false</IsPackable>
 
         <!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
     </PropertyGroup>
