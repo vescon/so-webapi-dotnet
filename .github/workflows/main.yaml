@@ -13,6 +13,8 @@ jobs:
       with:
         name: nupkg
         path: 'Artifacts/Packages/**/*.nupkg'
-    - name: Publish frontend nuget
+    - name: Publish to nuget.org
+      run: dotnet nuget push Artifacts/Packages/**/*.nupkg --api-key ${{secrets.NUGET_ORG_API_KEY}}
+    - name: Publish to github packages
       run: curl -vX PUT -u "user:${{secrets.GITHUB_TOKEN}}" -F package=@Artifacts/Packages/Vescon.So.WebApi.Client.0.0.2.nupkg https://nuget.pkg.github.com/vescon/
       shell: bash
