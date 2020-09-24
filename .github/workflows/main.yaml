@@ -17,9 +17,14 @@ jobs:
     #   with:
     #     name: nupkg
     #     path: '**/*.nupkg'
-    - uses: nuget/setup-nuget@v1
-      with:
-        nuget-version: '5.x'
-    - name: Publish the package to GPR
+    # - uses: nuget/setup-nuget@v1
+    #   with:
+    #     nuget-version: '5.x'
+    # - name: Publish the package to GPR
+    #   run: |
+    #     nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon -NonInteractive -SkipDuplicate -ApiKey ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish the package to Github package repository
       run: |
-        nuget push **/*.nupkg -NonInteractive -src https://nuget.pkg.github.com/vescon -SkipDuplicate -ApiKey ${{ secrets.GITHUB_TOKEN }}
+        dotnet nuget add source https://nuget.pkg.github.com/vescon -p ${{secrets.GITHUB_TOKEN}} -u vescon --store-password-in-clear-text 
+        dotnet nuget push **/*.nupkg -s https://nuget.pkg.github.com/vescon --skip-duplicate --no-service-endpoint
