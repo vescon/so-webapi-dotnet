@@ -294,7 +294,7 @@ namespace Sample
                     .OrderBy(x => x)
                     .Concatenate(", ");
                 Console.WriteLine("Please verify that all key part names are correctly configured: " + keyPartNames);
-                return null;
+                throw;
             }
         }
 

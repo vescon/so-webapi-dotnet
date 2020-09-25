@@ -7,6 +7,7 @@
         /// </summary>
         public AttributeValuePart()
         {
+            Name = string.Empty;
         }
 
         public AttributeValuePart(string name, string value)

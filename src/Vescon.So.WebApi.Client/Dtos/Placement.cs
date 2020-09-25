@@ -5,6 +5,13 @@ namespace Vescon.So.WebApi.Client.Dtos
 {
     public class Placement
     {
+        public Placement()
+        {
+            Type = string.Empty;
+            Location = new Point();
+            AttributeValueParts = new List<AttributeValuePart>();
+        }
+
         public Guid Guid { get; set; }
         public string Type { get; set; }
         public string? Identification { get; set; }

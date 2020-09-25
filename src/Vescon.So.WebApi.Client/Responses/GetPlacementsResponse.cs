@@ -5,7 +5,7 @@ namespace Vescon.So.WebApi.Client.Responses
 {
     public class GetPlacementsResponse
     {
-        public List<Placement> Placements { get; set; }
+        public List<Placement> Placements { get; set; } = null!;
 
         public bool HasNext { get; set; }
     }
