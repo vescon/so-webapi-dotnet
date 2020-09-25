@@ -11,7 +11,7 @@ namespace Sample.EnvironmentInfos
             "SO3/Master Data/Symbol Libraries/Symbols - Symbole/17 Robots - Roboter/ROB01";
 
         public override string MacroPath =>
-            "SO3/Master Data/Macros/1Robot_1SymbolWith4Connectors_3Regions";
+            "SO3/Master Data/Macros/1Robot_1SymbolWith4Connectors_7Regions";
 
         public override string Identification => "==123=ABC+456";
 
