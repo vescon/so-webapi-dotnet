@@ -11,14 +11,14 @@ jobs:
     
     - name: Upload Artifact
       uses: actions/upload-artifact@v2 
-      if: ${{ github.event_name }} == pull_request
+      if: ${{ github.event_name }} == 'pull_request'
       with:
         name: nupkg
         path: 'Artifacts/Packages/**/*.nupkg'
     - name: Publish to nuget.org
       run: dotnet nuget push Artifacts/Packages/**/*.nupkg --api-key ${{secrets.NUGET_ORG_API_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
-      if: ${{ github.event_name }} == pull_request 
+      if: ${{ github.event_name }} == 'pull_request'
     - name: Publish to github packages
       run: curl -vX PUT -u "user:${{secrets.GITHUB_TOKEN}}" -F package=@Artifacts/Packages/Vescon.So.WebApi.Client.0.0.2.nupkg https://nuget.pkg.github.com/vescon/
       shell: bash
-      if: ${{ github.event_name }} == pull_request
+      if: ${{ github.event_name }} == 'pull_request'
