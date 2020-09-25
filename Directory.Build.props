@@ -28,6 +28,8 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>SO, WebAPI, So3</PackageTags>
 
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
     </PropertyGroup>
 
