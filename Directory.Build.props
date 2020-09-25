@@ -23,10 +23,12 @@
         <Authors>vescon</Authors>
         <Company>Vescon GmbH</Company>
         <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) VESCON GmbH</Copyright>
-        <PackageDescription>Package to consume to SO WebAPI.</PackageDescription>
+        <PackageDescription>Package to consume the SO WebAPI.</PackageDescription>
         <RepositoryUrl>https://github.com/vescon/so-webapi-sample</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>SO, WebAPI, So3</PackageTags>
+
+        <IncludeSymbols>true</IncludeSymbols>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
