@@ -103,8 +103,7 @@ namespace Vescon.So.WebApi.Client
 
         public async Task UpdateAttributes(
             Guid layoutGuid,
-            PlacementsSelector selector,
-            string dataLanguage, 
+            PlacementsSelector selector, 
             string? identification = null,
             List<AttributeValuePart>? valueParts = null)
         {
@@ -112,7 +111,6 @@ namespace Vescon.So.WebApi.Client
             var request = new 
             {
                 Selector = selector,
-                DataLanguage = dataLanguage,
                 Identification = identification,
                 ValueParts = valueParts
             };

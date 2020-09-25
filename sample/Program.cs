@@ -123,8 +123,7 @@ namespace Sample
             await connector.UpdateAttributes(
                 layoutPageGuid,
                 new PlacementsSelector(mainSymbolReferenceGuid),
-                "en-US",
-                identification: EnvironmentInfo.IdentificationConnectorNew
+                EnvironmentInfo.IdentificationConnectorNew
             );
         }
 
@@ -197,7 +196,6 @@ namespace Sample
             await connector.UpdateAttributes(
                 layoutPageGuid,
                 new PlacementsSelector(EnvironmentInfo.Identification),
-                "en-US",
                 identification: "==123=XXX+457"
             );
         }
