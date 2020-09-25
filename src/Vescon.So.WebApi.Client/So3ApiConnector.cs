@@ -1,17 +1,16 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
-using Sample.Dtos;
-using Sample.Responses;
+using Vescon.So.WebApi.Client.Dtos;
+using Vescon.So.WebApi.Client.Responses;
 
-namespace Sample
+namespace Vescon.So.WebApi.Client
 {
-    public class So3ApiConnector
+    public class So3ApiConnector : IDisposable
     {
         private const string ApiPrefix = "/api/v1";
 
@@ -147,7 +146,22 @@ namespace Sample
                 throw new Exception(await response.Content.ReadAsStringAsync());
         }
 
-        public async IAsyncEnumerable<Placement> GetPlacementsAsync(
+        public async Task<List<Placement>> GetPlacements(
+            Guid layoutGuid,
+            string dataLanguage,
+            Guid? selectorPlacementGuid = null,
+            string? selectorIdentificationPrefix = null)
+        {
+            var placements = new List<Placement>(); 
+            await foreach (var placement in GetPlacementsInternal(layoutGuid, dataLanguage, selectorPlacementGuid, selectorIdentificationPrefix))
+            {
+                placements.Add(placement);
+            }
+
+            return placements;
+        }
+
+        private async IAsyncEnumerable<Placement> GetPlacementsInternal(
             Guid layoutGuid,
             string dataLanguage,
             Guid? selectorPlacementGuid = null,
@@ -181,6 +195,11 @@ namespace Sample
                 pageIndex++;
                 hasNext = parsedResponse.HasNext;
             } while (hasNext);
+        }
+        
+        public void Dispose()
+        {
+            _client.Dispose();
         }
         
         private static StringContent CreateJsonContent(object request)

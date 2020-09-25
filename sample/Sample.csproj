@@ -12,4 +12,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Vescon.So.WebApi.Client\Vescon.So.WebApi.Client.csproj" />
+  </ItemGroup>
 </Project>

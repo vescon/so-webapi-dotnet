@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Sample.Dtos;
 using Sample.EnvironmentInfos;
-using Sample.Responses;
+using Vescon.So.WebApi.Client;
+using Vescon.So.WebApi.Client.Dtos;
+using Vescon.So.WebApi.Client.Responses;
 
 namespace Sample
 {
@@ -99,42 +100,42 @@ namespace Sample
         {
             Console.WriteLine();
             Console.WriteLine("Load placement 4 infos via placement guid (en-US)");
-            var loadedPlacement4 = connector.GetPlacementsAsync(
+            var loadedPlacement4 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
                 selectorPlacementGuid: _placement4.Guid
             );
-            await foreach (var placement in loadedPlacement4)
+            foreach (var placement in loadedPlacement4)
                 DumpPlacement(placement);
 
             Console.WriteLine();
             Console.WriteLine("Load placement 4 infos via placement guid (de-DE)");
-            loadedPlacement4 = connector.GetPlacementsAsync(
+            loadedPlacement4 = await connector.GetPlacements(
                 layoutPageGuid,
                 "de-DE",
                 selectorPlacementGuid: _placement4.Guid
             );
-            await foreach (var placement in loadedPlacement4)
+            foreach (var placement in loadedPlacement4)
                 DumpPlacement(placement);
 
             Console.WriteLine();
             Console.WriteLine("Load placement 5 infos via placement guid");
-            var loadedPlacement5 = connector.GetPlacementsAsync(
+            var loadedPlacement5 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
                 selectorPlacementGuid: _placement5.Guid
             );
-            await foreach (var placement in loadedPlacement5)
+            foreach (var placement in loadedPlacement5)
                 DumpPlacement(placement);
 
             Console.WriteLine();
             Console.WriteLine("Load placement 2 infos via identification");
-            var loadedPlacement2 = connector.GetPlacementsAsync(
+            var loadedPlacement2 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
                 selectorIdentificationPrefix: EnvironmentInfo.Identification
             );
-            await foreach (var placement in loadedPlacement2)
+            foreach (var placement in loadedPlacement2)
                 DumpPlacement(placement);
         }
 
@@ -171,12 +172,12 @@ namespace Sample
 
             Console.WriteLine();
             Console.WriteLine("Load placement 2 infos via identification");
-            var loadedPlacement2 = connector.GetPlacementsAsync(
+            var loadedPlacement2 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
                 _placement2.Guid
             );
-            await foreach (var placement in loadedPlacement2)
+            foreach (var placement in loadedPlacement2)
                 DumpPlacement(placement);
         }
 
@@ -195,12 +196,12 @@ namespace Sample
 
             Console.WriteLine();
             Console.WriteLine("Load macro placements via identification:");
-            var loadedPlacement4 = connector.GetPlacementsAsync(
+            var loadedPlacement4 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
                 selectorIdentificationPrefix: "==XXX"
             );
-            await foreach (var placement in loadedPlacement4)
+            foreach (var placement in loadedPlacement4)
                 DumpPlacement(placement);
         }
 

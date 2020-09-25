@@ -1,0 +1,45 @@
+<Project ToolsVersion="15.0"
+    xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <LangVersion>8</LangVersion>
+        <IsPackable>false</IsPackable>
+
+        <!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Version>$(GitVersion_SemVer)</Version>
+        <Version Condition="'$(Version)' == ''">0.0.1</Version>
+        <FileVersion>0.0.1</FileVersion>
+        <FileVersion Condition="'$(GitVersion_MajorMinorPatch)' != '' And '$(GitVersion_CommitsSinceVersionSource)' != ''">$(GitVersion_MajorMinorPatch).$(GitVersion_CommitsSinceVersionSource)</FileVersion>
+        <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
+        <InformationalVersion Condition="'$(InformationalVersion)' == ''">0.0.1 - localBuild</InformationalVersion>
+        <IsPackable Condition="'$(IsPackable)' == ''">false</IsPackable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>$(ProjectName)</PackageId>
+        <Authors>vescon</Authors>
+        <Company>Vescon GmbH</Company>
+        <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) VESCON GmbH</Copyright>
+        <PackageDescription>Package to consume the SO WebAPI.</PackageDescription>
+        <RepositoryUrl>https://github.com/vescon/so-webapi-sample</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/vescon/so-webapi-sample</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageTags>SO, WebAPI, So3</PackageTags>
+
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+    </ItemGroup>
+</Project>

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sample.Dtos;
+using Vescon.So.WebApi.Client.Dtos;
 
 namespace Sample.EnvironmentInfos
 {
