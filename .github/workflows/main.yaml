@@ -3,7 +3,7 @@ on:
   pull_request:
   release:
     types: 
-      - created
+      - published
 
 jobs:
   build:
@@ -42,4 +42,4 @@ jobs:
           curl -vX PUT -u "user:${{secrets.GITHUB_TOKEN}}" -F package=@$f https://nuget.pkg.github.com/vescon/
         done        
       shell: bash
-      if: github.event_name == 'release'
+      # if: github.event_name == 'release'
