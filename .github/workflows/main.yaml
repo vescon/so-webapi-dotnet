@@ -33,7 +33,7 @@ jobs:
         path: 'Artifacts/Packages/**/*.nupkg'
     - name: Publish to nuget.org
       run: dotnet nuget push Artifacts/Packages/**/*.nupkg --api-key ${{secrets.NUGET_ORG_API_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
-      if: github.event_name == 'release'
+      # if: github.event_name == 'release'
     - name: Publish to github packages
       run: |
         for f in Artifacts/Packages/*.nupkg
@@ -42,4 +42,4 @@ jobs:
           curl -vX PUT -u "user:${{secrets.GITHUB_TOKEN}}" -F package=@$f https://nuget.pkg.github.com/vescon/
         done        
       shell: bash
-      if: github.event_name == 'release'
+      # if: github.event_name == 'release'
