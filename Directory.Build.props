@@ -25,6 +25,7 @@
         <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) VESCON GmbH</Copyright>
         <PackageDescription>Package to consume the SO WebAPI.</PackageDescription>
         <RepositoryUrl>https://github.com/vescon/so-webapi-sample</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/vescon/so-webapi-sample</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>SO, WebAPI, So3</PackageTags>
 
