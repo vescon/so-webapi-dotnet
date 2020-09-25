@@ -13,11 +13,13 @@ namespace Sample
     {
         private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
 
-        private static PlacementHeader _placement1;
-        private static PlacementHeader _placement2;
-        private static PlacementHeader _placement3;
-        private static PlacementHeader _placement4;
-        private static PlacementHeader _placement5;
+        private static PlacementHeader _symbolReference1;
+        private static PlacementHeader _symbolReference2;
+        private static PlacementHeader _symbolReference3;
+        private static PlacementHeader _symbolReference4;
+        private static PlacementHeader _symbolReference5;
+
+        private static List<PlacementHeader> _symbolReferenceWithConnectors;
 
         public static async Task Main()
         {
@@ -32,8 +34,11 @@ namespace Sample
             await CreateSymbolReferences(connector, layoutPageGuid);
             await LoadPlacements(connector, layoutPageGuid);
             await UpdatePlacements(connector, layoutPageGuid);
-            await UpdateMarkedForDeletion(connector, layoutPageGuid);
 
+            await CreateSymbolReferenceWithConnectors(connector, layoutPageGuid);
+            await UpdateSymbolReferenceWithConnectors(connector, layoutPageGuid);
+
+            await UpdateMarkedForDeletion(connector, layoutPageGuid);
             await CreateMacroReference(connector, layoutPageGuid);
         }
 
@@ -47,89 +52,116 @@ namespace Sample
         private static async Task CreateSymbolReferences(So3ApiConnector connector, Guid layoutPageGuid)
         {
             Console.WriteLine();
-            Console.WriteLine("Create anonymous placement 1:");
-            _placement1 = await CreateAnonymousPlacement(
+            Console.WriteLine("Create anonymous symbol reference 1:");
+            _symbolReference1 = await CreateAnonymousPlacement(
                 connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 100,
                 (float) Math.PI / 2);
-            DumpPlacement(_placement1);
+            DumpPlacement(_symbolReference1);
 
             Console.WriteLine();
-            Console.WriteLine("Create placement 2 with identification:");
-            _placement2 = await CreatePlacementWithIdentification(
+            Console.WriteLine("Create symbol reference 2 via identification:");
+            _symbolReference2 = (await CreatePlacementWithIdentification(
                 connector, layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 200,
-                EnvironmentInfo.Identification);
-            DumpPlacement(_placement2);
+                EnvironmentInfo.Identification)).Single();
+            DumpPlacement(_symbolReference2);
 
             Console.WriteLine();
-            Console.WriteLine("Create placement 3 with attribute updates (identifying):");
-            _placement3 = await CreatePlacementWithAttributeUpdates(
+            Console.WriteLine("Create symbol reference 3 via attribute updates (identifying):");
+            _symbolReference3 = await CreatePlacementWithAttributeUpdates(
                 connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 300,
                 EnvironmentInfo.AttributeValuePartsIdentifying);
-            DumpPlacement(_placement3);
+            DumpPlacement(_symbolReference3);
 
             Console.WriteLine();
-            Console.WriteLine("Create placement 4 with attribute updates (descriptive multilanguage):");
-            _placement4 = await CreatePlacementWithAttributeUpdates(
+            Console.WriteLine("Create symbol reference 4 via attribute updates (descriptive multilanguage):");
+            _symbolReference4 = await CreatePlacementWithAttributeUpdates(
                 connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 400,
                 EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
-            DumpPlacement(_placement4);
+            DumpPlacement(_symbolReference4);
 
             Console.WriteLine();
-            Console.WriteLine("Create placement 5 with attribute updates (property indexed):");
-            _placement5 = await CreatePlacementWithAttributeUpdates(
+            Console.WriteLine("Create symbol reference 5 via attribute updates (property indexed):");
+            _symbolReference5 = await CreatePlacementWithAttributeUpdates(
                 connector,
                 layoutPageGuid,
                 EnvironmentInfo.SymbolPath,
                 500,
                 EnvironmentInfo.AttributeValuePartsPropertyIndexed);
-            DumpPlacement(_placement5);
+            DumpPlacement(_symbolReference5);
+        }
+
+        private static async Task CreateSymbolReferenceWithConnectors(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Create symbol reference with connectors via identification:");
+            _symbolReferenceWithConnectors = await CreatePlacementWithIdentification(
+                connector, layoutPageGuid,
+                EnvironmentInfo.SymbolPathWithConnectors,
+                -100,
+                EnvironmentInfo.IdentificationMainSymbolReference);
+            _symbolReferenceWithConnectors.ForEach(DumpPlacement);
+        }
+
+        private static async Task UpdateSymbolReferenceWithConnectors(So3ApiConnector connector, Guid layoutPageGuid)
+        {
+            var mainSymbolReferenceGuid = _symbolReferenceWithConnectors
+                .Single(x => x.Identification == EnvironmentInfo.IdentificationConnector).Guid;
+
+            Console.WriteLine();
+            Console.WriteLine("Update connector");
+            await connector.UpdateAttributes(
+                layoutPageGuid,
+                new PlacementsSelector(mainSymbolReferenceGuid),
+                "en-US",
+                identification: EnvironmentInfo.IdentificationConnectorNew
+            );
         }
 
         private static async Task LoadPlacements(So3ApiConnector connector, Guid layoutPageGuid)
         {
             Console.WriteLine();
-            Console.WriteLine("Load placement 4 infos via placement guid (en-US)");
+            Console.WriteLine("Load symbol reference 4 infos via placement guid (en-US)");
             var loadedPlacement4 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
-                selectorPlacementGuid: _placement4.Guid
+                selectorPlacementGuid: _symbolReference4.Guid
             );
             foreach (var placement in loadedPlacement4)
                 DumpPlacement(placement);
 
             Console.WriteLine();
-            Console.WriteLine("Load placement 4 infos via placement guid (de-DE)");
+            Console.WriteLine("Load symbol reference 4 infos via placement guid (de-DE)");
             loadedPlacement4 = await connector.GetPlacements(
                 layoutPageGuid,
                 "de-DE",
-                selectorPlacementGuid: _placement4.Guid
+                selectorPlacementGuid: _symbolReference4.Guid
             );
             foreach (var placement in loadedPlacement4)
                 DumpPlacement(placement);
 
             Console.WriteLine();
-            Console.WriteLine("Load placement 5 infos via placement guid");
+            Console.WriteLine("Load symbol reference 5 infos via placement guid");
             var loadedPlacement5 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
-                selectorPlacementGuid: _placement5.Guid
+                selectorPlacementGuid: _symbolReference5.Guid
             );
             foreach (var placement in loadedPlacement5)
                 DumpPlacement(placement);
 
             Console.WriteLine();
-            Console.WriteLine("Load placement 2 infos via identification");
+            Console.WriteLine("Load symbol reference 2 infos via identification");
             var loadedPlacement2 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
@@ -142,16 +174,16 @@ namespace Sample
         private static async Task UpdatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
         {
             Console.WriteLine();
-            Console.WriteLine("Update Placement 2 attribute value parts");
+            Console.WriteLine("Update symbol reference 2 attribute value parts");
             await connector.UpdateAttributes(
                 layoutPageGuid,
-                new PlacementsSelector(_placement2.Guid),
+                new PlacementsSelector(_symbolReference2.Guid),
                 "en-US",
                 valueParts: EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage
             );
 
             Console.WriteLine();
-            Console.WriteLine("Update Placement 2 attributes via identification");
+            Console.WriteLine("Update symbol reference 2 attributes via identification");
             await connector.UpdateAttributes(
                 layoutPageGuid,
                 new PlacementsSelector(EnvironmentInfo.Identification),
@@ -163,19 +195,19 @@ namespace Sample
         private static async Task UpdateMarkedForDeletion(So3ApiConnector connector, Guid layoutPageGuid)
         {
             Console.WriteLine();
-            Console.WriteLine("Update Placement 2 MarkedForDeletion to true");
+            Console.WriteLine("Update symbol reference 2 MarkedForDeletion to true");
             await connector.UpdateMarkedForDeletion(
                 layoutPageGuid,
-                new PlacementsSelector(_placement2.Guid),
+                new PlacementsSelector(_symbolReference2.Guid),
                 true
             );
 
             Console.WriteLine();
-            Console.WriteLine("Load placement 2 infos via identification");
+            Console.WriteLine("Load symbol reference 2 infos via identification");
             var loadedPlacement2 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
-                _placement2.Guid
+                _symbolReference2.Guid
             );
             foreach (var placement in loadedPlacement2)
                 DumpPlacement(placement);
@@ -244,7 +276,7 @@ namespace Sample
             return placements.Single();
         }
 
-        private static async Task<PlacementHeader> CreatePlacementWithIdentification(
+        private static async Task<List<PlacementHeader>> CreatePlacementWithIdentification(
             So3ApiConnector connector,
             Guid layoutPageGuid,
             string symbolPath,
@@ -257,7 +289,7 @@ namespace Sample
                 locationX,
                 0,
                 identification: identification);
-            return placements.Single();
+            return placements;
         }
 
         private static async Task<PlacementHeader> CreatePlacementWithAttributeUpdates(

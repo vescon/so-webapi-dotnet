@@ -11,10 +11,16 @@ namespace Sample.EnvironmentInfos
         public override string SymbolPath =>
             "SO3/Master Data/Symbol Libraries/Symbole/52 Roboter/ROB01";
 
+        public override string SymbolPathWithConnectors =>
+            "SO3/Master Data/Symbol Libraries/Symbole/23 PN Komponenten/PNP01";
+
         public override string MacroPath =>
             "SO3/Master Data/Macros/Schaltschränke/Mobile panel 1";
 
         public override string Identification => "==123456789=ABC++XX999";
+        public override string IdentificationMainSymbolReference => "==XXX=ABC++XX999";
+        public override string IdentificationConnector => "==XXX=ABC++XX999:X1:P1";
+        public override string IdentificationConnectorNew => "==XXX=ABC++XX999:X42";
 
         public override List<AttributeValuePart> AttributeValuePartsIdentifying => new List<AttributeValuePart>
         {
