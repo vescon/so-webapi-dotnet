@@ -2,17 +2,31 @@ on:
   push:
   pull_request:
   release:
-    types: # This configuration does not affect the page_build event above
+    types: 
       - created
-
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    # needed for gitversion    
+    - name: Fetch all history for all tags and branches
+      run: git fetch --prune --unshallow
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.2
+      with:
+          versionSpec: '5.2.x'
+    - name: Use GitVersion
+      id: gitversion # step id used as reference for output values
+      uses: gittools/actions/gitversion/execute@v0.9.2
     - name: Build solution
       run: dotnet build --configuration Release Vescon.So.WebApi.sln
+      env:
+        GITVERSION_MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}
+        GITVERSION_CommitsSinceVersionSource: ${{ steps.gitversion.outputs.commitsSinceVersionSource }}
+        GITVERSION_InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}
+
     - name: Create the package
       run: dotnet pack --configuration Release --no-build Vescon.So.WebApi.sln  -o Artifacts/Packages
     

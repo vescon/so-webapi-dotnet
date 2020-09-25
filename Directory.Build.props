@@ -9,12 +9,22 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <Version>0.0.1</Version>
+        <Version Condition="'$(GITVERSION_MajorMinorPatch)' != '' And '$(GITVERSION_CommitsSinceVersionSource)' != ''">$(GITVERSION_MajorMinorPatch).$(GITVERSION_CommitsSinceVersionSource)</Version>
+        <FileVersion>$(Version)</FileVersion>
+        <InformationalVersion>$(GITVERSION_InformationalVersion)</InformationalVersion>
+        <InformationalVersion Condition="'$(InformationalVersion)' == ''">0.0.1 - localBuild</InformationalVersion>
+        <IsPackable Condition="'$(IsPackable)' == ''">false</IsPackable>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <PackageId>$(ProjectName)</PackageId>
-        <Version>0.0.2</Version>
         <Authors>vescon</Authors>
         <Company>Vescon GmbH</Company>
+        <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) VESCON GmbH</Copyright>
         <PackageDescription>Package to consume to SO WebAPI.</PackageDescription>
         <RepositoryUrl>https://github.com/vescon/so-webapi-sample</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageTags>SO, WebAPI, So3</PackageTags>
     </PropertyGroup>
 </Project>
