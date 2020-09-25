@@ -28,4 +28,8 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>SO, WebAPI, So3</PackageTags>
     </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
 </Project>
