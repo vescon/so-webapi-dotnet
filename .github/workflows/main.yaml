@@ -8,8 +8,10 @@ jobs:
     - run: dotnet build --configuration Release Vescon.So.WebApi.sln
     - name: Create the package
       run: dotnet pack --configuration Release --no-build Vescon.So.WebApi.sln  -o Artifacts/Packages
+    
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v2 
+      if: ${{ github.event_name }} == pull_request
       with:
         name: nupkg
         path: 'Artifacts/Packages/**/*.nupkg'
