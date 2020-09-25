@@ -12,6 +12,11 @@ namespace Vescon.So.WebApi.Client.Dtos
             ValueParts = valueParts;
         }
 
+        public AttributeUpdates(List<AttributeValuePart> valueParts)
+            : this(new PlacementsSelector(), valueParts)
+        {
+        }
+
         public PlacementsSelector Selector { get; }
         public List<AttributeValuePart> ValueParts { get; }
     }

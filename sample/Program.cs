@@ -267,13 +267,7 @@ namespace Sample
             int locationX,
             List<AttributeValuePart> attributeValueParts)
         {
-
-            var attributeUpdates = new List<AttributeUpdates>
-            {
-                new AttributeUpdates(
-                    new PlacementsSelector(true),
-                    attributeValueParts)
-            };
+            var attributeUpdates = new List<AttributeUpdates> {new AttributeUpdates(attributeValueParts)};
 
             try
             {
