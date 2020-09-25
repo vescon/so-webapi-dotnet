@@ -150,10 +150,11 @@ namespace Vescon.So.WebApi.Client
             Guid layoutGuid,
             string dataLanguage,
             Guid? selectorPlacementGuid = null,
-            string? selectorIdentificationPrefix = null)
+            string? selectorIdentificationPrefix = null,
+            string? selectorTypePath = null)
         {
             var placements = new List<Placement>(); 
-            await foreach (var placement in GetPlacementsInternal(layoutGuid, dataLanguage, selectorPlacementGuid, selectorIdentificationPrefix))
+            await foreach (var placement in GetPlacementsInternal(layoutGuid, dataLanguage, selectorPlacementGuid, selectorIdentificationPrefix, selectorTypePath))
             {
                 placements.Add(placement);
             }
@@ -165,7 +166,8 @@ namespace Vescon.So.WebApi.Client
             Guid layoutGuid,
             string dataLanguage,
             Guid? selectorPlacementGuid = null,
-            string? selectorIdentificationPrefix = null)
+            string? selectorIdentificationPrefix = null,
+            string? selectorTypePath = null)
         {
             var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements";
             
@@ -174,8 +176,12 @@ namespace Vescon.So.WebApi.Client
                 { "DataLanguage", dataLanguage }
             };
             
-            if (selectorPlacementGuid != null) parameters.Add("PlacementGuid", selectorPlacementGuid.Value.ToString());
-            if (selectorIdentificationPrefix != null) parameters.Add("IdentificationPrefix", selectorIdentificationPrefix);
+            if (selectorPlacementGuid != null)
+                parameters.Add("PlacementGuid", selectorPlacementGuid.Value.ToString());
+            if (selectorIdentificationPrefix != null)
+                parameters.Add("IdentificationPrefix", selectorIdentificationPrefix);
+            if (selectorTypePath != null)
+                parameters.Add("TypePath", selectorTypePath);
 
             var pageIndex = 0;
             bool hasNext;

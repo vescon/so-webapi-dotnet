@@ -169,6 +169,16 @@ namespace Sample
             );
             foreach (var placement in loadedPlacement2)
                 DumpPlacement(placement);
+            
+            Console.WriteLine();
+            Console.WriteLine("Load symbol reference via type path");
+            var loadedPlacement3 = await connector.GetPlacements(
+                layoutPageGuid,
+                "en-US",
+                selectorTypePath: EnvironmentInfo.SymbolPath
+            );
+            foreach (var placement in loadedPlacement3)
+                DumpPlacement(placement);
         }
 
         private static async Task UpdatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
