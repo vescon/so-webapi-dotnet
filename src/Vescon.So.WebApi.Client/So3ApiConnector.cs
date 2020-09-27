@@ -50,10 +50,13 @@ namespace Vescon.So.WebApi.Client
             var urlWithParameters = QueryHelpers.AddQueryString(url, parameters);
             var response = await _client.GetAsync(urlWithParameters);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (response.IsSuccessStatusCode) return await GetFromJsonContent<LayoutPageResponse>(response.Content);
+            
+            var message = await response.Content.ReadAsStringAsync();
+            if (message.StartsWith("{\"Message\":\"path is invalid:"))
                 return null;
-
-            return await GetFromJsonContent<LayoutPageResponse>(response.Content);
+            
+            throw new Exception(message);
         }
         
         public async Task<List<PlacementHeader>> CreatePlacement(
