@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - feature/github-actions-improvement
+      - master
     tags:
         - "*"
   pull_request:
