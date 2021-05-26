@@ -222,10 +222,15 @@ namespace Vescon.So.WebApi.Client
         private static async Task<T> GetFromJsonContent<T>(HttpContent content)
         {
             var json = await content.ReadAsStreamAsync();
-            return await JsonSerializer.DeserializeAsync<T>(json, new JsonSerializerOptions
+            var deserialized = await JsonSerializer.DeserializeAsync<T>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
+
+            if (deserialized == null)
+                throw new InvalidOperationException("Got no valid response");
+
+            return deserialized;
         }
     }
 }
