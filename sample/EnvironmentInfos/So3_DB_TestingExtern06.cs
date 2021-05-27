@@ -19,8 +19,8 @@ namespace Sample.EnvironmentInfos
 
         public override string Identification => "==123456789=ABC++XX999";
         public override string IdentificationMainSymbolReference => "==XXX=ABC++XX999";
-        public override string IdentificationConnector => "==XXX=ABC++XX999:X1:P1";
-        public override string IdentificationConnectorNew => "==XXX=ABC++XX999:X42";
+        public override string IdentificationConnector => IdentificationMainSymbolReference + ":X1:P1";
+        public override string IdentificationConnectorNew => IdentificationMainSymbolReference + ":X42";
 
         public override List<AttributeValuePart> AttributeValuePartsIdentifying => new List<AttributeValuePart>
         {

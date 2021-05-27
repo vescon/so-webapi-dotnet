@@ -36,7 +36,7 @@ namespace Sample
             await UpdatePlacements(connector, layoutPageGuid);
 
             await CreateSymbolReferenceWithConnectors(connector, layoutPageGuid);
-            await UpdateSymbolReferenceWithConnectors(connector, layoutPageGuid);
+            await UpdateConnector(connector, layoutPageGuid);
 
             await UpdateMarkedForDeletion(connector, layoutPageGuid);
             await CreateMacroReference(connector, layoutPageGuid);
@@ -80,25 +80,31 @@ namespace Sample
                 EnvironmentInfo.AttributeValuePartsIdentifying);
             DumpPlacement(_symbolReference3);
 
-            Console.WriteLine();
-            Console.WriteLine("Create symbol reference 4 via attribute updates (descriptive multilanguage):");
-            _symbolReference4 = await CreatePlacementWithAttributeUpdates(
-                connector,
-                layoutPageGuid,
-                EnvironmentInfo.SymbolPath,
-                400,
-                EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
-            DumpPlacement(_symbolReference4);
+            if (EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Create symbol reference 4 via attribute updates (descriptive multilanguage):");
+                _symbolReference4 = await CreatePlacementWithAttributeUpdates(
+                    connector,
+                    layoutPageGuid,
+                    EnvironmentInfo.SymbolPath,
+                    400,
+                    EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage);
+                DumpPlacement(_symbolReference4);
+            }
 
-            Console.WriteLine();
-            Console.WriteLine("Create symbol reference 5 via attribute updates (property indexed):");
-            _symbolReference5 = await CreatePlacementWithAttributeUpdates(
-                connector,
-                layoutPageGuid,
-                EnvironmentInfo.SymbolPath,
-                500,
-                EnvironmentInfo.AttributeValuePartsPropertyIndexed);
-            DumpPlacement(_symbolReference5);
+            if (EnvironmentInfo.AttributeValuePartsPropertyIndexed != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Create symbol reference 5 via attribute updates (property indexed):");
+                _symbolReference5 = await CreatePlacementWithAttributeUpdates(
+                    connector,
+                    layoutPageGuid,
+                    EnvironmentInfo.SymbolPath,
+                    500,
+                    EnvironmentInfo.AttributeValuePartsPropertyIndexed);
+                DumpPlacement(_symbolReference5);
+            }
         }
 
         private static async Task CreateSymbolReferenceWithConnectors(So3ApiConnector connector, Guid layoutPageGuid)
@@ -113,71 +119,72 @@ namespace Sample
             _symbolReferenceWithConnectors.ForEach(DumpPlacement);
         }
 
-        private static async Task UpdateSymbolReferenceWithConnectors(So3ApiConnector connector, Guid layoutPageGuid)
+        private static async Task UpdateConnector(So3ApiConnector connector, Guid layoutPageGuid)
         {
-            var mainSymbolReferenceGuid = _symbolReferenceWithConnectors
+            var connectorReferenceGuid = _symbolReferenceWithConnectors
                 .Single(x => x.Identification == EnvironmentInfo.IdentificationConnector).Guid;
 
             Console.WriteLine();
             Console.WriteLine("Update connector");
             await connector.UpdateAttributes(
                 layoutPageGuid,
-                new PlacementsSelector(mainSymbolReferenceGuid),
+                new PlacementsSelector(connectorReferenceGuid),
                 EnvironmentInfo.IdentificationConnectorNew
             );
         }
 
         private static async Task LoadPlacements(So3ApiConnector connector, Guid layoutPageGuid)
         {
-            Console.WriteLine();
-            Console.WriteLine("Load symbol reference 4 infos via placement guid (en-US)");
-            var loadedPlacement4 = await connector.GetPlacements(
-                layoutPageGuid,
-                "en-US",
-                selectorPlacementGuid: _symbolReference4.Guid
-            );
-            foreach (var placement in loadedPlacement4)
-                DumpPlacement(placement);
+            if (_symbolReference4 != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Load symbol reference 4 infos via placement guid (en-US)");
+                var placements = await connector.GetPlacements(
+                    layoutPageGuid,
+                    "en-US",
+                    selectorPlacementGuid: _symbolReference4.Guid
+                );
+                DumpPlacements(placements);
 
-            Console.WriteLine();
-            Console.WriteLine("Load symbol reference 4 infos via placement guid (de-DE)");
-            loadedPlacement4 = await connector.GetPlacements(
-                layoutPageGuid,
-                "de-DE",
-                selectorPlacementGuid: _symbolReference4.Guid
-            );
-            foreach (var placement in loadedPlacement4)
-                DumpPlacement(placement);
+                Console.WriteLine();
+                Console.WriteLine("Load symbol reference 4 infos via placement guid (de-DE)");
+                placements = await connector.GetPlacements(
+                    layoutPageGuid,
+                    "de-DE",
+                    selectorPlacementGuid: _symbolReference4.Guid
+                );
+                DumpPlacements(placements);
+            }
 
-            Console.WriteLine();
-            Console.WriteLine("Load symbol reference 5 infos via placement guid");
-            var loadedPlacement5 = await connector.GetPlacements(
-                layoutPageGuid,
-                "en-US",
-                selectorPlacementGuid: _symbolReference5.Guid
-            );
-            foreach (var placement in loadedPlacement5)
-                DumpPlacement(placement);
+            if (_symbolReference5 != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Load symbol reference 5 infos via placement guid");
+                var placements = await connector.GetPlacements(
+                    layoutPageGuid,
+                    "en-US",
+                    selectorPlacementGuid: _symbolReference5.Guid
+                );
+                DumpPlacements(placements);
+            }
 
             Console.WriteLine();
             Console.WriteLine("Load symbol reference 2 infos via identification");
-            var loadedPlacement2 = await connector.GetPlacements(
+            var placements2 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
                 selectorIdentificationPrefix: EnvironmentInfo.Identification
             );
-            foreach (var placement in loadedPlacement2)
-                DumpPlacement(placement);
-            
+            DumpPlacements(placements2);
+
             Console.WriteLine();
             Console.WriteLine("Load symbol reference via type path");
-            var loadedPlacement3 = await connector.GetPlacements(
+            var placements3 = await connector.GetPlacements(
                 layoutPageGuid,
                 "en-US",
                 selectorTypePath: EnvironmentInfo.SymbolPath
             );
-            foreach (var placement in loadedPlacement3)
-                DumpPlacement(placement);
+            DumpPlacements(placements3);
         }
 
         private static async Task UpdatePlacements(So3ApiConnector connector, Guid layoutPageGuid)
@@ -350,6 +357,12 @@ namespace Sample
                 $"Guid: {placement.Guid} - Identification: {placement.Identification} - Type: {placement.Type} - TypePath: '{placement.TypePath}' - Location: ({placement.Location.X}/{placement.Location.Y}) - RotationZ: {placement.RotationZ}");
             Dump(placement.AttributeValueParts);
             Console.WriteLine("-----------------------------------");
+        }
+
+        private static void DumpPlacements(IEnumerable<Placement> placements)
+        {
+            foreach (var placement in placements)
+                DumpPlacement(placement);
         }
 
         private static void Dump(List<AttributeValuePart> attributeValueParts)
