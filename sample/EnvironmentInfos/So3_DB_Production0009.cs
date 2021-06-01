@@ -24,8 +24,8 @@ namespace Sample.EnvironmentInfos
 
         public override List<AttributeValuePart> AttributeValuePartsIdentifying => new List<AttributeValuePart>
         {
-            new AttributeValuePart("Anlagenkennzeichnung", "YYY999"),
-            new AttributeValuePart("Einbauort", "ABCD")
+            new AttributeValuePart("Anlagenkennzeichnung (=)", "YYY999"),
+            new AttributeValuePart("Einbauort (+)", "ABCD")
         };
 
         public override List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage => null;
