@@ -25,5 +25,9 @@ namespace Sample.EnvironmentInfos
         public virtual List<AttributeValuePart> AttributeValuePartsIdentifying => throw new NotSupportedException();
         public virtual List<AttributeValuePart> AttributeValuePartsDescriptiveMultilanguage => throw new NotSupportedException();
         public virtual List<AttributeValuePart> AttributeValuePartsPropertyIndexed => throw new NotSupportedException();
+
+        public virtual string ExcelImportFacilityPath { get; }
+        public virtual string ExcelImportPageName { get; }
+        public virtual string ExcelFile { get; }
     }
 }

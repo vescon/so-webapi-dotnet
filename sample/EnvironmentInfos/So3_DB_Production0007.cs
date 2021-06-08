@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Vescon.So.WebApi.Client.Dtos;
 
 namespace Sample.EnvironmentInfos
 {
-    internal abstract class So3_DB_Production0009 : EnvironmentInfoBase
+    internal abstract class So3_DB_Production0007 : EnvironmentInfoBase
     {
         public override string LayoutFacilityPath => "SO3/Projects/Z_Vescon/Hegh_01/Hegh_01/RK";
         public override string LayoutPageName => "Layout 01";
@@ -35,5 +34,9 @@ namespace Sample.EnvironmentInfos
         {
             new AttributeValuePart("Order code", 42, "123456")
         };
+
+        public override string ExcelImportFacilityPath => "SO3/Projects/SO3/Hegh/API_Test/API_Test/F1";
+        public override string ExcelImportPageName => "02";
+        public override string ExcelFile => @"%userprofile%\Desktop\ApiTest.xlsx";
     }
 }

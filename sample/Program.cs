@@ -28,7 +28,16 @@ namespace Sample
 
             await Login(connector, url, EnvironmentInfo);
 
-            var layoutPage = await SetupLayoutPage(connector, EnvironmentInfo);
+            await RunSimpleImport(connector);
+            await RunExcelImport(connector);
+        }
+
+        private static async Task RunSimpleImport(So3ApiConnector connector)
+        {
+            var layoutPage = await SetupLayoutPage(
+                connector,
+                EnvironmentInfo.LayoutFacilityPath,
+                EnvironmentInfo.LayoutPageName);
             var layoutPageGuid = layoutPage.LayoutGuid;
 
             await CreateSymbolReferences(connector, layoutPageGuid);
@@ -40,6 +49,23 @@ namespace Sample
 
             await UpdateMarkedForDeletion(connector, layoutPageGuid);
             await CreateMacroReference(connector, layoutPageGuid);
+        }
+
+        private static async Task RunExcelImport(So3ApiConnector connector)
+        {
+            var file = EnvironmentInfo.ExcelFile;
+            if (string.IsNullOrEmpty(file))
+                return;
+            file = Environment.ExpandEnvironmentVariables(file);
+
+            var layoutPage = await SetupLayoutPage(
+                connector,
+                EnvironmentInfo.ExcelImportFacilityPath,
+                EnvironmentInfo.ExcelImportPageName);
+            var layoutPageGuid = layoutPage.LayoutGuid;
+
+            var importer = new ExcelImporter(connector);
+            await importer.ImportFromFile(file, layoutPageGuid);
         }
 
         private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
@@ -83,7 +109,7 @@ namespace Sample
             if (EnvironmentInfo.AttributeValuePartsDescriptiveMultilanguage != null)
             {
                 Console.WriteLine();
-                Console.WriteLine("Create symbol reference 4 via attribute updates (descriptive multilanguage):");
+                Console.WriteLine("Create symbol reference 4 via attribute updates (descriptive multi-language):");
                 _symbolReference4 = await CreatePlacementWithAttributeUpdates(
                     connector,
                     layoutPageGuid,
@@ -254,11 +280,10 @@ namespace Sample
 
         private static async Task<LayoutPageResponse> SetupLayoutPage(
             So3ApiConnector connector,
-            EnvironmentInfoBase environmentInfo)
+            string pagePath,
+            string pageName)
         {
-            var path = environmentInfo.LayoutFacilityPath;
-            var name = environmentInfo.LayoutPageName;
-            var fullPath = $"{path}/{name}";
+            var fullPath = $"{pagePath}/{pageName}";
 
             // Setup layout page
             Console.WriteLine($"Checking if Layout page with the path '<{fullPath}>' exists...");
@@ -266,7 +291,7 @@ namespace Sample
             if (layoutPage == null)
             {
                 Console.WriteLine("Layout page doesn't exist. Creating ...");
-                layoutPage = await connector.CreateLayoutPage(path, name);
+                layoutPage = await connector.CreateLayoutPage(pagePath, pageName);
                 Console.WriteLine($"Layout page {layoutPage.Name} created with guid {layoutPage.LayoutGuid}");
             }
             else

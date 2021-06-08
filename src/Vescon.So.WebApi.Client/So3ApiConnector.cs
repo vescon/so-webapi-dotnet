@@ -64,7 +64,7 @@ namespace Vescon.So.WebApi.Client
             string placementTypePath,
             int x = 0,
             int y = 0,
-            float rotationZ = 0,
+            float rotationZRadiant = 0,
             string? identification = null,
             List<AttributeUpdates>? attributeUpdates = null)
         {
@@ -73,7 +73,7 @@ namespace Vescon.So.WebApi.Client
             {
                 Type = new { Path = placementTypePath },
                 Location = new { X = x, Y = y },
-                RotationZ = rotationZ,
+                RotationZ = rotationZRadiant,
                 Identification = identification,
                 AttributeUpdates = attributeUpdates ?? new List<AttributeUpdates>()
             };
