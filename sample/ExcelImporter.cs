@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ExcelDataReader;
 using Vescon.So.WebApi.Client;
+using Vescon.So.WebApi.Client.Dtos;
+
 // ReSharper disable StringLiteralTypo
 
 namespace Sample
@@ -23,9 +25,45 @@ namespace Sample
         public async Task ImportFromFile(string filepath, Guid layoutPageGuid)
         {
             var placements = await LoadPlacementsFromExcel(filepath);
-            
+
+            var groupedPlacements = placements.ToLookup(x => x.MacroReferenceGuid != null);
+            var macroReferences = groupedPlacements[true].ToLookup(x => x.MacroReferenceGuid.Value);
+            foreach (var macroReference in macroReferences)
+            {
+                var identifier = macroReference
+                    .Where(x => !string.IsNullOrEmpty(x.FullIdentifyingValue))
+                    .OrderBy(x => x.FullIdentifyingValue)
+                    .FirstOrDefault()?.FullIdentifyingValue ?? string.Empty;
+
+                var top = macroReference
+                    .Select(x => x.Y)
+                    .Max();
+                var left = macroReference
+                    .Select(x => x.X)
+                    .Min();
+
+                var macroPath = macroReference.First().MacroPath;
+
+                Console.WriteLine($"Creating macro: {macroPath} ...");
+                var createdPlacements = await _connector.CreatePlacement(
+                    layoutPageGuid,
+                    macroPath,
+                    (int) top,
+                    (int) left,
+                    identification: identifier);
+                
+                Console.WriteLine("Result:");
+                DumpPlacements(createdPlacements);
+            }
+
             // import to layout page
-            foreach (var placement in placements.Where(x=>x.PlacementType == "SymbolReference"))
+            var otherPlacements = groupedPlacements[false].ToList();
+            var importablePlacements = otherPlacements
+                .Where(x => x.PlacementType == "SymbolReference")
+                .Where(x => !x.IsSubsymbol)
+                .Where(x => !x.IsConnectionSymbol)
+                .ToList();
+            foreach (var placement in importablePlacements)
             {
                 var rotationRad = placement.RotationZ / 360 * 2 * Math.PI;
 
@@ -39,9 +77,14 @@ namespace Sample
                     placement.FullIdentifyingValue);
 
                 Console.WriteLine("Result:");
-                foreach (var createdPlacement in createdPlacements.OrderBy(x=>x.Identification ?? string.Empty))
-                    Console.WriteLine($@"{createdPlacement.Guid} - {createdPlacement.Identification}");
+                DumpPlacements(createdPlacements);
             }
+        }
+
+        private static void DumpPlacements(List<PlacementHeader> createdPlacements)
+        {
+            foreach (var createdPlacement in createdPlacements.OrderBy(x => x.Identification ?? string.Empty))
+                Console.WriteLine($@"{createdPlacement.Guid} - {createdPlacement.Identification}");
         }
 
         private static async Task<List<ImportPlacement>> LoadPlacementsFromExcel(string filepath)
@@ -75,12 +118,22 @@ namespace Sample
                     PlacementGuid = Map(row, "Placement guid", columnMapping, x => Guid.Parse(Convert.ToString(x)!)),
                     PlacementType = Map(row, "Placement type", columnMapping, Convert.ToString),
                     FullIdentifyingValue = Map(row, "Full identifying value", columnMapping, Convert.ToString),
+                    IsSubsymbol = Map(row, "Is Subsymbol", columnMapping, Convert.ToBoolean),
+                    IsConnectionSymbol = Map(row, "Is connection symbol", columnMapping, Convert.ToBoolean),
                     X = Map(row, "X", columnMapping, Convert.ToSingle),
                     Y = Map(row, "Y", columnMapping, Convert.ToSingle),
                     Z = Map(row, "Z", columnMapping, Convert.ToSingle),
                     RotationZ = Map(row, "Rotation Z", columnMapping, Convert.ToSingle),
+                    RegionName = Map(row, "Region name", columnMapping, Convert.ToString),
                     SymbolPath = Map(row, "Symbol path", columnMapping, Convert.ToString),
-                    RegionName = Map(row, "Region name", columnMapping, Convert.ToString)
+                    MacroPath = Map(row, "Macro path", columnMapping, Convert.ToString),
+                    MacroReferenceGuid = Map(row, "Macro reference guid", columnMapping, x =>
+                    {
+                        var value = Convert.ToString(x);
+                        return string.IsNullOrEmpty(value)
+                            ? (Guid?) null
+                            : Guid.Parse(value);
+                    })
                 })
                 .ToList();
         }
@@ -109,10 +162,14 @@ namespace Sample
         public float RotationZ { get; init; }
         public string SymbolPath { get; init; }
         public string RegionName { get; init; }
+        public string MacroPath { get; init; }
+        public Guid? MacroReferenceGuid { get; init; }
+        public bool IsSubsymbol { get; init; }
+        public bool IsConnectionSymbol { get; init; }
 
         public override string ToString()
         {
-            return $"{PlacementGuid} - {FullIdentifyingValue} - {PlacementType} - {SymbolPath}";
+            return $"{PlacementGuid} - {FullIdentifyingValue} - {PlacementType} - {MacroPath} - {SymbolPath}";
         }
     }
 }
