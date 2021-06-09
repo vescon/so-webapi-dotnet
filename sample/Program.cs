@@ -11,7 +11,7 @@ namespace Sample
 {
     public static class Program
     {
-        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalProduction0007();
+        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
 
         private static PlacementHeader _symbolReference1;
         private static PlacementHeader _symbolReference2;
@@ -28,8 +28,8 @@ namespace Sample
 
             await Login(connector, url, EnvironmentInfo);
 
-            ////await RunSimpleImport(connector);
-            await RunExcelImport(connector);
+            await RunSimpleImport(connector);
+            ////await RunExcelImport(connector);
         }
 
         private static async Task RunSimpleImport(So3ApiConnector connector)
