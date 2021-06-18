@@ -6,10 +6,12 @@ namespace Vescon.So.WebApi.Client.Dtos
     {
         public AttributeUpdates(
             PlacementsSelector selector,
-            List<AttributeValuePart> valueParts)
+            List<AttributeValuePart> valueParts,
+            Dictionary<string, bool>? overwrittenValues = null)
         {
             Selector = selector;
             ValueParts = valueParts;
+            OverwrittenValues = overwrittenValues;
         }
 
         public AttributeUpdates(List<AttributeValuePart> valueParts)
@@ -19,5 +21,7 @@ namespace Vescon.So.WebApi.Client.Dtos
 
         public PlacementsSelector Selector { get; }
         public List<AttributeValuePart> ValueParts { get; }
+
+        public Dictionary<string, bool>? OverwrittenValues { get; }
     }
 }

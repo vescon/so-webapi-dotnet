@@ -108,14 +108,16 @@ namespace Vescon.So.WebApi.Client
             Guid layoutGuid,
             PlacementsSelector selector, 
             string? identification = null,
-            List<AttributeValuePart>? valueParts = null)
+            List<AttributeValuePart>? valueParts = null,
+            Dictionary<string, bool>? overwrittenValues = null)
         {
             var url = ApiPrefix + $"/layouts/{layoutGuid}/Placements/Attributes";
             var request = new 
             {
                 Selector = selector,
                 Identification = identification,
-                ValueParts = valueParts
+                ValueParts = valueParts,
+                OverwrittenValues = overwrittenValues
             };
             var content = CreateJsonContent(request);
             var response = await _client.PutAsync(url, content);

@@ -10,10 +10,11 @@
             Name = string.Empty;
         }
 
-        public AttributeValuePart(string name, string value)
+        public AttributeValuePart(string name, string value, bool isOverwritten = false)
             : this(name)
         {
             Value = value;
+            IsOverwritten = isOverwritten;
         }
 
         public AttributeValuePart(string name, string language, string value, bool isDescription = false)
@@ -44,6 +45,7 @@
         /// Key part name.
         /// </summary>
         public string Name { get; set; }
+        public bool IsOverwritten { get; set; }
 
         public string? Language { get; set; }
         public int? Index { get; set; }
