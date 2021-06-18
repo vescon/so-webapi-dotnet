@@ -36,7 +36,7 @@ namespace Sample.EnvironmentInfos
         };
 
         public override string ExcelImportFacilityPath => "SO3/Projects/SO3/Hegh/API_Test/API_Test/F1";
-        public override string ExcelImportPageName => "02";
-        public override string ExcelFile => @"%userprofile%\Desktop\ApiTest.xlsx";
+        public override string ExcelImportPageName => "Api Import";
+        public override string ExcelFile => @"ExcelImportData\ApiImport_Production0007.xlsx";
     }
 }

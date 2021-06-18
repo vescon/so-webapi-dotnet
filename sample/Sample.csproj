@@ -9,6 +9,13 @@
 
   <ItemGroup>
     <None Remove=".gitignore" />
+    <None Remove="ExcelImportData\ApiImport_Production0007.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ExcelImportData\ApiImport_Production0007.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

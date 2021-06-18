@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Sample.EnvironmentInfos;
@@ -11,7 +12,7 @@ namespace Sample
 {
     public static class Program
     {
-        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
+        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalProduction0007();
 
         private static PlacementHeader _symbolReference1;
         private static PlacementHeader _symbolReference2;
@@ -56,7 +57,8 @@ namespace Sample
             var file = EnvironmentInfo.ExcelFile;
             if (string.IsNullOrEmpty(file))
                 return;
-            file = Environment.ExpandEnvironmentVariables(file);
+            var path = Path.Combine(Environment.CurrentDirectory, file);
+            Console.WriteLine("Importing excel file: " + path);
 
             var layoutPage = await SetupLayoutPage(
                 connector,
@@ -65,7 +67,7 @@ namespace Sample
             var layoutPageGuid = layoutPage.LayoutGuid;
 
             var importer = new ExcelImporter(connector);
-            await importer.ImportFromFile(file, layoutPageGuid);
+            await importer.ImportFromFile(path, layoutPageGuid);
         }
 
         private static async Task Login(So3ApiConnector connector, string url, EnvironmentInfoBase environmentInfo)
@@ -401,6 +403,7 @@ namespace Sample
                         var valueString = new List<string>
                             {
                                 x.Name,
+                                x.IsOverwritten.ToString(),
                                 x.Index?.ToString(),
                                 x.Language,
                                 x.Value,
