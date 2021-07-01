@@ -103,7 +103,7 @@ namespace Sample
                     .ToList();
 
                 var attributeUpdates = new AttributeUpdates(
-                    new PlacementsSelector(placement.PlacementGuid),
+                    new PlacementsSelector(), // new PlacementsSelector(placement.PlacementGuid), // RK: don't specify guid because we have to change all attributes in all symbols
                     fixedAttributeValueParts,
                     attributeImport.OverwrittenValues);
 
@@ -314,7 +314,7 @@ namespace Sample
         private class AttributeImport
         {
             public List<AttributeValuePart> ValueParts { get; } = new();
-            public Dictionary<string, bool> OverwrittenValues { get; set; } = new();
+            public Dictionary<string, bool> OverwrittenValues { get; } = new();
         }
 
         private class ImportPlacement
