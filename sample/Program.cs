@@ -22,15 +22,25 @@ namespace Sample
 
         private static List<PlacementHeader> _symbolReferenceWithConnectors;
 
-        public static async Task Main()
+        private static string _facilityPath;
+        private static string _pageName;
+
+        public static async Task Main(string[] args)
         {
+            if (args.Length > 0)
+            {
+                var path = args[0].Split('/');
+                _facilityPath = path.Take(path.Length - 1).Concatenate("/");
+                _pageName = path.Last();
+            }
+
             var url = EnvironmentInfo.ApiUrl;
             var connector = new So3ApiConnector(url);
 
             await Login(connector, url, EnvironmentInfo);
 
-            await RunSimpleImport(connector);
-            ////await RunExcelImport(connector); // requires matching symbol/macro paths
+            ////await RunSimpleImport(connector);
+            await RunExcelImport(connector); // requires matching symbol/macro paths
         }
 
         private static async Task RunSimpleImport(So3ApiConnector connector)
@@ -58,12 +68,14 @@ namespace Sample
             if (string.IsNullOrEmpty(file))
                 return;
             var path = Path.Combine(Environment.CurrentDirectory, file);
+            
             Console.WriteLine("Importing excel file: " + path);
-
+            var importFacilityPath = _facilityPath ?? EnvironmentInfo.ExcelImportFacilityPath;
+            var importPageName = _pageName ?? EnvironmentInfo.ExcelImportPageName;
             var layoutPage = await SetupLayoutPage(
                 connector,
-                EnvironmentInfo.ExcelImportFacilityPath,
-                EnvironmentInfo.ExcelImportPageName);
+                importFacilityPath,
+                importPageName);
             var layoutPageGuid = layoutPage.LayoutGuid;
 
             var importer = new ExcelImporter(connector);
