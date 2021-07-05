@@ -43,7 +43,7 @@ namespace Sample
         {
             _connector = connector;
         }
-
+        
         public async Task ImportFromFile(string filepath, Guid layoutPageGuid)
         {
             var placements = await LoadPlacementsFromExcel(filepath);
@@ -52,8 +52,6 @@ namespace Sample
             var macroReferences = groupedPlacements[true].ToLookup(x => x.MacroReferenceGuid.Value);
             foreach (var macroReference in macroReferences)
             {
-                var identifier = macroReference.First(x => !string.IsNullOrEmpty(x.FullIdentifyingValue)).FullIdentifyingValue ?? string.Empty;
-
                 var firstElement = macroReference.First();
                 var top = macroReference
                     .Select(x => x.Y)
@@ -64,12 +62,19 @@ namespace Sample
                 var macroPath = firstElement.MacroPath;
 
                 Console.WriteLine($"Creating macro: {macroPath} ...");
+
+                // update placement in macro
+                var attributeUpdates = macroReference.Where(x => !string.IsNullOrEmpty(x.Remark))
+                    .OrderByDescending(x => x.Remark.Length)
+                    .Select(placement => new AttributeUpdates(new PlacementsSelector(placement.Remark), placement.AttributeImport.ValueParts))
+                    .ToList();
+
                 var createdPlacements = await _connector.CreatePlacement(
                     layoutPageGuid,
                     macroPath,
                     (int) left,
                     (int) top,
-                    identification: identifier);
+                    attributeUpdates: attributeUpdates);
                 
                 Console.WriteLine("Result:");
                 DumpPlacements(createdPlacements);
@@ -121,7 +126,7 @@ namespace Sample
             }
         }
 
-        private static void DumpPlacements(List<PlacementHeader> createdPlacements)
+        private static void DumpPlacements(IEnumerable<PlacementHeader> createdPlacements)
         {
             foreach (var createdPlacement in createdPlacements.OrderBy(x => x.Identification ?? string.Empty))
                 Console.WriteLine($@"{createdPlacement.Guid} - {createdPlacement.Identification}");
@@ -159,6 +164,7 @@ namespace Sample
                 {
                     PlacementGuid = Map(row, "PlacementGuid", columnMapping, x => Guid.Parse(Convert.ToString(x)!)),
                     PlacementType = Map(row, "Placement type", columnMapping, Convert.ToString),
+                    Remark = Map(row, "[] Remark", columnMapping, Convert.ToString),
                     FullIdentifyingValue = Map(row, "Full identifying value", columnMapping, Convert.ToString),
                     IsSubSymbol = Map(row, "IsSubSymbol", columnMapping, Convert.ToBoolean),
                     IsConnectionSymbol = Map(row, "IsConnectionSymbol", columnMapping, Convert.ToBoolean),
@@ -332,6 +338,7 @@ namespace Sample
             public bool IsSubSymbol { get; init; }
             public bool IsConnectionSymbol { get; init; }
             public AttributeImport AttributeImport { get; init; }
+            public string Remark { get; init; }
 
             public override string ToString()
             {
