@@ -25,14 +25,9 @@ namespace Sample
         private static string _facilityPath;
         private static string _pageName;
 
-        public static async Task Main(string[] args)
+        public static async Task Main()
         {
-            if (args.Length > 0)
-            {
-                var path = args[0].Split('/');
-                _facilityPath = path.Take(path.Length - 1).Concatenate("/");
-                _pageName = path.Last();
-            }
+            ReadExcelImportPath();
 
             var url = EnvironmentInfo.ApiUrl;
             var connector = new So3ApiConnector(url);
@@ -41,6 +36,20 @@ namespace Sample
 
             ////await RunSimpleImport(connector);
             await RunExcelImport(connector); // requires matching symbol/macro paths
+        }
+
+        private static void ReadExcelImportPath()
+        {
+            var defaultPath = $"{EnvironmentInfo.ExcelImportFacilityPath}/{EnvironmentInfo.ExcelImportPageName}";
+            var effectivePath = defaultPath;
+#if !DEBUG
+            Console.Write($"Please enter layout import path: [{defaultPath}] ");
+            var input = Console.ReadLine();
+            effectivePath = string.IsNullOrEmpty(input) ? defaultPath : input;
+#endif
+            var path = effectivePath.Split('/');
+            _facilityPath = path.Take(path.Length - 1).Concatenate("/");
+            _pageName = path.Last();
         }
 
         private static async Task RunSimpleImport(So3ApiConnector connector)
