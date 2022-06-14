@@ -12,7 +12,7 @@ namespace Sample
 {
     public static class Program
     {
-        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3LocalWebApiSource();
+        private static readonly EnvironmentInfoBase EnvironmentInfo = new So3RemoteProductionPresentation01();
 
         private static PlacementHeader _symbolReference1;
         private static PlacementHeader _symbolReference2;
@@ -24,18 +24,29 @@ namespace Sample
 
         private static string _facilityPath;
         private static string _pageName;
+        private static string _apiUrl;
 
         public static async Task Main()
         {
-            ReadExcelImportPath();
+            try
+            {
+                ReadApiUrl();
+                ReadExcelImportPath();
 
-            var url = EnvironmentInfo.ApiUrl;
-            var connector = new So3ApiConnector(url);
+                var url = _apiUrl;
+                var connector = new So3ApiConnector(url);
 
-            await Login(connector, url, EnvironmentInfo);
+                await Login(connector, url, EnvironmentInfo);
 
-            ////await RunSimpleImport(connector);
-            await RunExcelImport(connector); // requires matching symbol/macro paths
+                ////await RunSimpleImport(connector);
+                ////await RunExcelImport(connector); // requires matching symbol/macro paths
+                await RunExcelImportSimpleV1(connector);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error:");
+                Console.WriteLine(ex);
+            }
         }
 
         private static void ReadExcelImportPath()
@@ -50,6 +61,18 @@ namespace Sample
             var path = effectivePath.Split('/');
             _facilityPath = path.Take(path.Length - 1).Concatenate("/");
             _pageName = path.Last();
+        }
+
+        private static void ReadApiUrl()
+        {
+            var defaultUrl = EnvironmentInfo.ApiUrl;
+            var effectiveUrl = defaultUrl;
+#if !DEBUG
+            Console.Write($"Please enter api url: [{defaultUrl}] ");
+            var input = Console.ReadLine();
+            effectiveUrl = string.IsNullOrEmpty(input) ? defaultUrl : input;
+#endif
+            _apiUrl = effectiveUrl;
         }
 
         private static async Task RunSimpleImport(So3ApiConnector connector)
@@ -88,6 +111,26 @@ namespace Sample
             var layoutPageGuid = layoutPage.LayoutGuid;
 
             var importer = new ExcelImporter(connector);
+            await importer.ImportFromFile(path, layoutPageGuid);
+        }
+
+        private static async Task RunExcelImportSimpleV1(So3ApiConnector connector)
+        {
+            var file = EnvironmentInfo.ExcelFileSimple;
+            if (string.IsNullOrEmpty(file))
+                return;
+            var path = Path.Combine(Environment.CurrentDirectory, file);
+
+            Console.WriteLine("Importing excel file: " + path);
+            var importFacilityPath = _facilityPath ?? EnvironmentInfo.ExcelImportFacilityPath;
+            var importPageName = _pageName ?? EnvironmentInfo.ExcelImportPageName;
+            var layoutPage = await SetupLayoutPage(
+                connector,
+                importFacilityPath,
+                importPageName);
+            var layoutPageGuid = layoutPage.LayoutGuid;
+
+            var importer = new SimpleExcelImporter(connector);
             await importer.ImportFromFile(path, layoutPageGuid);
         }
 

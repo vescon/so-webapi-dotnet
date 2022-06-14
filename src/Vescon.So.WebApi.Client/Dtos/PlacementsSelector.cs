@@ -20,5 +20,7 @@ namespace Vescon.So.WebApi.Client.Dtos
 
         public Guid? PlacementGuid { get; }
         public string? IdentificationPrefix { get; }
+
+        public string? TypePath { get; set; } = null;
     }
 }

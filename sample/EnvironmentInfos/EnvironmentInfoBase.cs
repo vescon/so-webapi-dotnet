@@ -29,5 +29,6 @@ namespace Sample.EnvironmentInfos
         public virtual string ExcelImportFacilityPath { get; }
         public virtual string ExcelImportPageName { get; }
         public virtual string ExcelFile { get; }
+        public virtual string ExcelFileSimple { get; }
     }
 }
