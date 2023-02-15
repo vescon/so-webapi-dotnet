@@ -39,8 +39,8 @@ namespace Sample
                 await Login(connector, url, EnvironmentInfo);
 
                 ////await RunSimpleImport(connector);
-                ////await RunExcelImport(connector); // requires matching symbol/macro paths
-                await RunExcelImportSimpleV1(connector);
+                await RunExcelImport(connector); // requires matching symbol/macro paths
+                ////await RunExcelImportSimpleV1(connector);
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace Sample
         private static void ReadApiUrl()
         {
             var defaultUrl = EnvironmentInfo.ApiUrl;
-            var effectiveUrl = defaultUrl;
+            var effectiveUrl = new So3LocalProduction0007().ApiUrl;
 #if !DEBUG
             Console.Write($"Please enter api url: [{defaultUrl}] ");
             var input = Console.ReadLine();
